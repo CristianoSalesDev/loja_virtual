@@ -17,14 +17,14 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "T_MARCA")
-@SequenceGenerator(name = "seq_marca", sequenceName = "seq_marca", allocationSize = 1, initialValue = 1)
-public class Marca implements Serializable {
+@Table(name = "T_CATEGORIA")
+@SequenceGenerator(name = "seq_categoria", sequenceName = "seq_categoria", allocationSize = 1, initialValue = 1)
+public class Categoria implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_marca")	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_categoria")	
 	private Long id;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -81,10 +81,10 @@ public class Marca implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Marca other = (Marca) obj;
+		Categoria other = (Categoria) obj;
 		return Objects.equals(id, other.id);
 	}
 	
-	
 
+	
 }
