@@ -1,6 +1,5 @@
 package com.br.lojavirtual.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
@@ -15,26 +14,31 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
-@Table(name = "T_MARCA")
-@SequenceGenerator(name = "seq_marca", sequenceName = "seq_marca", allocationSize = 1, initialValue = 1)
-public class Marca implements Serializable {
-
+@Table(name = "T_ACESSO")
+@SequenceGenerator(name = "seq_acesso", sequenceName = "seq_acesso", allocationSize = 1, initialValue = 1)
+public class Acesso implements GrantedAuthority {
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_marca")	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_acesso")	
 	private Long id;
-	
+
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
-	@Column(nullable = false)
-	private String descricao;
+	@Column(nullable = false)	
+	private String descricao; /* Tipo de usuário: ROLE_ADMIN, ROLE_SUPERVISOR, ROLE_USUARIO */
 	
-	private boolean ativo = false ;
+	@Override
+	public String getAuthority() {
+		
+		return this.descricao;
+	}
 
 	public Long getId() {
 		return id;
@@ -60,14 +64,6 @@ public class Marca implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public boolean isAtivo() {
-		return ativo;
-	}
-
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -81,9 +77,8 @@ public class Marca implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Marca other = (Marca) obj;
+		Acesso other = (Acesso) obj;
 		return Objects.equals(id, other.id);
 	}
 	
-
 }
