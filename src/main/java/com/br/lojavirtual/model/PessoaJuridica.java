@@ -14,7 +14,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name = "T_PESSOA_JURIDICA")
 @PrimaryKeyJoinColumn(name = "id")
-
 public class PessoaJuridica extends Pessoa {
 
 	private static final long serialVersionUID = 1L;

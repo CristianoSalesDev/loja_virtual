@@ -27,7 +27,7 @@ public class PessoaFisica extends Pessoa {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
-	private Date data_nascimento = new Date();
+	private Date data_nascimento;
 
 	public String getCpf() {
 		return cpf;
