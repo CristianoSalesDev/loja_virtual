@@ -34,7 +34,7 @@ public class Categoria implements Serializable {
 	@Column(nullable = false)
 	private String descricao;
 	
-	private boolean ativo = false ;
+	private Boolean ativo = Boolean.TRUE;
 
 	public Long getId() {
 		return id;
@@ -59,12 +59,12 @@ public class Categoria implements Serializable {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-
-	public boolean isAtivo() {
+	
+	public Boolean getAtivo() {
 		return ativo;
 	}
 
-	public void setAtivo(boolean ativo) {
+	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
 

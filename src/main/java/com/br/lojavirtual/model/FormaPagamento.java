@@ -34,7 +34,7 @@ public class FormaPagamento implements Serializable {
 	@Column(nullable = false)
 	private String descricao;
 	
-	private boolean ativo = false ;
+	private Boolean ativo = Boolean.TRUE;
 
 	public Long getId() {
 		return id;
@@ -60,11 +60,11 @@ public class FormaPagamento implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public boolean isAtivo() {
+	public Boolean getAtivo() {
 		return ativo;
 	}
 
-	public void setAtivo(boolean ativo) {
+	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
 
