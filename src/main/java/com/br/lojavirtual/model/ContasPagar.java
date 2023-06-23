@@ -23,7 +23,6 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.br.lojavirtual.enums.StatusContasPagar;
-import com.br.lojavirtual.enums.StatusContasReceber;
 
 @Entity
 @Table(name = "T_CONTAS_PAGAR")
