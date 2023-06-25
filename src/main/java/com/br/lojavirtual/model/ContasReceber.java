@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -42,7 +43,8 @@ public class ContasReceber implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_pagamento;
-	
+
+	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_vencimento;	
@@ -51,14 +53,21 @@ public class ContasReceber implements Serializable {
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusContasReceber statusContasReceber;
 	
 	private BigDecimal valor_desconto;
 	
+	@Column(nullable = false)
     private BigDecimal valor_total;
     
+	@Column(columnDefinition = "text")
     private String observacao;
+	
+    @Column(columnDefinition = "text", nullable = false)
+    private String descricao;
+	
 
 	public Long getId() {
 		return id;
@@ -130,6 +139,14 @@ public class ContasReceber implements Serializable {
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}	
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	@Override

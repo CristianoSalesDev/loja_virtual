@@ -32,6 +32,7 @@ public class CupomDesconto implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
+	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_validade;

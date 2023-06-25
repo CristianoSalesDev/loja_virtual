@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -43,6 +44,7 @@ public class ContasPagar implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_pagamento;
 	
+	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_vencimento;	
@@ -55,13 +57,19 @@ public class ContasPagar implements Serializable {
 	@JoinColumn(name = "pessoa_fornecedor_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fornecedor_fk"))
 	private Pessoa pessoa_fornecedor;	
 	
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusContasPagar statusContasPagar;
 	
 	private BigDecimal valor_desconto;
 	
+	@Column(nullable = false)
     private BigDecimal valor_total;
     
+    @Column(columnDefinition = "text", nullable = false)
+    private String descricao;
+	
+	@Column(columnDefinition = "text")
     private String observacao;
 
 	public Long getId() {
@@ -142,6 +150,14 @@ public class ContasPagar implements Serializable {
 
 	public void setStatusContasPagar(StatusContasPagar statusContasPagar) {
 		this.statusContasPagar = statusContasPagar;
+	}	
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	@Override

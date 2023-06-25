@@ -35,7 +35,8 @@ public class Endereco implements Serializable {
 	
 	@Column(nullable = false)
 	private String logradouro;
-	
+
+	@Column(nullable = false)
 	private String numero;
 	
 	private String complemento;
@@ -53,6 +54,7 @@ public class Endereco implements Serializable {
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TipoEndereco tipoEndereco;	
 

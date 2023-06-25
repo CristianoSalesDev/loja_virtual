@@ -34,9 +34,10 @@ public class AvaliacaoProduto implements Serializable {
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 
-	@Column(columnDefinition = "text")	
+	@Column(columnDefinition = "text", nullable = false)	
 	private String descricao;
 	
+	@Column(nullable = false)
     private Integer nota = 0;
 
 	public Long getId() {
