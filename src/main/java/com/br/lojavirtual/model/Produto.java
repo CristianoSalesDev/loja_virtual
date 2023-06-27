@@ -36,6 +36,7 @@ public class Produto implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TipoUnidade tipoUnidade;
 		
@@ -45,16 +46,22 @@ public class Produto implements Serializable {
 	@Column(columnDefinition = "text", length = 2000)
 	private String detalhes;
 	
+	@Column(nullable = false)
     private Double peso;
     
+	@Column(nullable = false)
     private Double altura;
     
+	@Column(nullable = false)
     private Double largura;
     
+	@Column(nullable = false)
     private Double comprimento;
     
+	@Column(nullable = false)
     private BigDecimal valor = BigDecimal.ZERO;
     
+	@Column(nullable = false)
     private Integer QtdeEstoque = 0;
     
     private Integer QtdeAlertaEstoque = 0;
@@ -65,6 +72,7 @@ public class Produto implements Serializable {
     
     private Integer QtdeClique = 0;
 	
+    @Column(nullable = false)
 	private Boolean ativo = Boolean.TRUE;
 
 	public Long getId() {

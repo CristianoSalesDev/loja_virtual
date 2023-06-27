@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,12 +41,19 @@ public class Usuario implements UserDetails {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
+	@Column(nullable = false)
     private String login;
     
+	@Column(nullable = false)
     private String senha;
     
+	@Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private Date data_atual_senha;
+    
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
+	private Pessoa pessoa;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "t_usuario_acesso", uniqueConstraints = @UniqueConstraint (
@@ -99,5 +108,12 @@ public class Usuario implements UserDetails {
 		return true;
 	}
 
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
 
 }

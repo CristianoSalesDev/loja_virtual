@@ -36,6 +36,7 @@ public class NotaEntrada implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_entrada = new Date();
 
+	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_emissao;
@@ -59,6 +60,7 @@ public class NotaEntrada implements Serializable {
     
     private BigDecimal valorFrete;
     
+    @Column(nullable = false)
     private BigDecimal valorTotal;    
 	
 	@ManyToOne(targetEntity = Pessoa.class)

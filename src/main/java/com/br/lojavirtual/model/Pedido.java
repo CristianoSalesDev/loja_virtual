@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -36,6 +37,7 @@ public class Pedido implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
+	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_entrega;
@@ -52,12 +54,15 @@ public class Pedido implements Serializable {
 	@JoinColumn(name = "endereco_cobranca_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "endereco_cobranca_fk"))	
 	private Endereco enderecoCobranca;
 
+	@Column(nullable = false)
     private BigDecimal valorTotal;
     
     private BigDecimal valorDesconto;
-    
+
+    @Column(nullable = false)
     private BigDecimal valorFrete;
-    
+
+    @Column(nullable = false)
     private Integer diasEntrega = 0;    
     
 	@ManyToOne
@@ -69,7 +74,7 @@ public class Pedido implements Serializable {
     private NFe NfeId;
 	
 	@ManyToOne
-	@JoinColumn(name = "cupom_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "cupom_fk"))    
+	@JoinColumn(name = "cupom_id", foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "cupom_fk"))    
     private CupomDesconto cupomId;
 
 	private String observacao;

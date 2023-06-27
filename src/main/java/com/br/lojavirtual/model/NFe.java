@@ -30,16 +30,19 @@ public class NFe implements Serializable {
 	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;
 
+	@Column(nullable = false)
 	private String numero;
 	
+	@Column(nullable = false)
 	private String serie;
 	
+	@Column(nullable = false)
 	private String tipo;
 	
-	@Column(columnDefinition = "text")	
+	@Column(columnDefinition = "text", nullable = false)	
 	private String xml;
 	
-	@Column(columnDefinition = "text")	
+	@Column(columnDefinition = "text", nullable = false)	
 	private String pdf;
 
 	public String getNumero() {

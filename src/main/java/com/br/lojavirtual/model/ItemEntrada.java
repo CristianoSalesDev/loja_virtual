@@ -43,6 +43,7 @@ public class ItemEntrada implements Serializable {
  
     private BigDecimal valorDesconto;
     
+    @Column(nullable = false)
     private BigDecimal totalItem;
 
 	public Long getId() {
