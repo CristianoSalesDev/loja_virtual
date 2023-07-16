@@ -116,4 +116,52 @@ public class Usuario implements UserDetails {
 		this.pessoa = pessoa;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getData_cadastro() {
+		return data_cadastro;
+	}
+
+	public void setData_cadastro(Date data_cadastro) {
+		this.data_cadastro = data_cadastro;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public Date getData_atual_senha() {
+		return data_atual_senha;
+	}
+
+	public void setData_atual_senha(Date data_atual_senha) {
+		this.data_atual_senha = data_atual_senha;
+	}
+
+	public List<Acesso> getAcessos() {
+		return acessos;
+	}
+
+	public void setAcessos(List<Acesso> acessos) {
+		this.acessos = acessos;
+	}
+
 }
