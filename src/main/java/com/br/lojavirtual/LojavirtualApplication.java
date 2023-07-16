@@ -13,8 +13,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = {"com.br.lojavirtual.repository"})
 @EnableTransactionManagement
 public class LojavirtualApplication {
-
-	public static void main(String[] args) {
+	
+	
+    public static void main(String[] args) {
+    	
+    	//System.out.println(new BCryptPasswordEncoder().encode("123"));
+    	/* $2a$10$t8wQ4WntYXJPTKdeHqJdseHJC3xrgfXN02LhoPDH46AvWA/g6lXuS  */
+    	
 		SpringApplication.run(LojavirtualApplication.class, args);
 	}
 
