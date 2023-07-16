@@ -41,6 +41,9 @@ public abstract class Pessoa implements Serializable {
 	private List<Endereco> enderecos = new ArrayList<Endereco>();
 	
 	private Boolean ativo = Boolean.TRUE;
+	
+	@Column
+	private String tipoPessoa ;
 
 	public List<Endereco> getEnderecos() {
 		return enderecos;
@@ -88,6 +91,14 @@ public abstract class Pessoa implements Serializable {
 
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
+	}
+	
+	public String getTipoPessoa() {
+		return tipoPessoa;
+	}
+
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
 	}
 
 	@Override
