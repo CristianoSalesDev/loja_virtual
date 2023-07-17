@@ -192,7 +192,7 @@ public class LojavirtualApplicationTests extends TestCase {
 	}	
 	
 	@Test
-	public void testCadastraAcesso() {
+	public void testCadastraAcesso() throws ExceptionLojaVirtual {
 		
 		
 		Acesso acesso = new Acesso();
