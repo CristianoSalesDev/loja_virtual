@@ -1,5 +1,6 @@
 package com.br.lojavirtual.security;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +15,10 @@ import com.br.lojavirtual.ApplicationContextLoad;
 import com.br.lojavirtual.model.Usuario;
 import com.br.lojavirtual.repository.UsuarioRepository;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 
 /*Criar a autenticação e retonar também a autenticação JWT*/
 @Service
@@ -23,7 +26,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JWTTokenAutenticacaoService {
 
 	/*Token de validade de 11 dias*/
-	/* Para achar os dias procurar no google dias para milisegundos */
+	/* Para achar os dias procurar no google dias para milisegundos  */
 	private static final long EXPIRATION_TIME = 959990000;
 	
 	/*Chave de senha para juntar com o JWT*/
@@ -58,9 +61,11 @@ public class JWTTokenAutenticacaoService {
 	
 	
 	/*Retorna o usuário validado com token ou caso nao seja valido retorna null*/
-	public Authentication getAuthetication(HttpServletRequest request, HttpServletResponse response) {
+	public Authentication getAuthetication(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		String token = request.getHeader(HEADER_STRING);
+	String token = request.getHeader(HEADER_STRING);
+		
+		try {
 		
 		if (token != null) {
 			
@@ -70,7 +75,7 @@ public class JWTTokenAutenticacaoService {
 			String user = Jwts.parser().
 					setSigningKey(SECRET)
 					.parseClaimsJws(tokenLimpo)
-					.getBody().getSubject(); /*ADMIN ou CRIS*/
+					.getBody().getSubject(); /*ADMIN ou Alex*/
 			
 			if (user != null) {
 				
@@ -89,8 +94,18 @@ public class JWTTokenAutenticacaoService {
 			
 		}
 		
-		liberacaoCors(response);
+		}catch (SignatureException e) {
+			response.getWriter().write("Token está inválido !!!");
+
+		}catch (ExpiredJwtException e) {
+			response.getWriter().write("Token está expirado, efetue o login novamente !!!");
+		}
+		finally {
+			liberacaoCors(response);
+		}
+		
 		return null;
+	
 	}	
 	
 	/*Fazendo liberação contra erro de COrs no navegador*/
