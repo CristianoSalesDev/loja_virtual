@@ -41,7 +41,7 @@ public class Usuario implements UserDetails {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
     private String login;
     
 	@Column(nullable = false)
@@ -52,8 +52,14 @@ public class Usuario implements UserDetails {
     private Date data_atual_senha;
     
 	@ManyToOne(targetEntity = Pessoa.class)
-	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
+	@JoinColumn(name = "pessoa_id", nullable = false, 
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
+	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_usu_fk"))
+	private Pessoa empresaId;	
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "t_usuario_acesso", uniqueConstraints = @UniqueConstraint (
@@ -163,5 +169,13 @@ public class Usuario implements UserDetails {
 	public void setAcessos(List<Acesso> acessos) {
 		this.acessos = acessos;
 	}
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
+	}	
 
 }

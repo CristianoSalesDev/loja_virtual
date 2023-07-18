@@ -67,6 +67,11 @@ public class NotaEntrada implements Serializable {
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ne_fk"))
+	private Pessoa empresaId;	
+	
 	@ManyToOne
 	@JoinColumn(name = "contasPagarId", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "contasPagar_fk"))
 	private ContasPagar contasPagarId;
@@ -189,6 +194,14 @@ public class NotaEntrada implements Serializable {
 
 	public void setContasPagarId(ContasPagar contasPagarId) {
 		this.contasPagarId = contasPagarId;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -29,6 +30,11 @@ public class NFe implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;
+	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_nfe_fk"))
+	private Pessoa empresaId;	
 
 	@Column(nullable = false)
 	private String numero;
@@ -99,6 +105,14 @@ public class NFe implements Serializable {
 
 	public void setPedidoId(Pedido pedidoId) {
 		this.pedidoId = pedidoId;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

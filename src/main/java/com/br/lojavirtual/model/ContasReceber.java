@@ -53,6 +53,11 @@ public class ContasReceber implements Serializable {
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_cr_fk"))
+	private Pessoa empresaId;	
+	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusContasReceber statusContasReceber;
@@ -147,6 +152,14 @@ public class ContasReceber implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

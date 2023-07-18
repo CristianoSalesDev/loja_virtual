@@ -6,10 +6,14 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -45,6 +49,11 @@ public class CupomDesconto implements Serializable {
     private BigDecimal percentual_desconto;
 	
     private Boolean ativo = Boolean.TRUE;
+    
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_cd_fk"))
+	private Pessoa empresaId;	
 
 	public Long getId() {
 		return id;
@@ -100,6 +109,14 @@ public class CupomDesconto implements Serializable {
 
 	public void setPercentual_desconto(BigDecimal percentual_desconto) {
 		this.percentual_desconto = percentual_desconto;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

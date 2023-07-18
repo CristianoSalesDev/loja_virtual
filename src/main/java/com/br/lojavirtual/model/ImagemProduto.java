@@ -46,6 +46,11 @@ public class ImagemProduto implements Serializable {
 	private Produto produto;
 	
 	private Boolean ativo = Boolean.TRUE;
+	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ip_fk"))
+	private Pessoa empresaId;		
 
 	public Long getId() {
 		return id;
@@ -93,6 +98,14 @@ public class ImagemProduto implements Serializable {
 
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

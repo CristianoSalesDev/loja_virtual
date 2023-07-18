@@ -38,6 +38,11 @@ public class StatusRastreio implements Serializable {
 	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;
 	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_sr_fk"))
+	private Pessoa empresaId;	
+	
 	private String centroDistribuicao;
 	
 	private String status;
@@ -100,6 +105,14 @@ public class StatusRastreio implements Serializable {
 
 	public void setPedidoId(Pedido pedidoId) {
 		this.pedidoId = pedidoId;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

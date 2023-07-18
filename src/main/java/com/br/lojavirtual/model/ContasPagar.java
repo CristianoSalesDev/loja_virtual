@@ -55,7 +55,12 @@ public class ContasPagar implements Serializable {
 	
 	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "pessoa_fornecedor_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fornecedor_fk"))
-	private Pessoa pessoa_fornecedor;	
+	private Pessoa pessoa_fornecedor;
+	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_cp_fk"))
+	private Pessoa empresaId;	
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -158,6 +163,14 @@ public class ContasPagar implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

@@ -36,6 +36,11 @@ public class ItemPedido implements Serializable {
 	
 	@Column(nullable = false)
     private Double quantidade;
+	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_iped_fk"))
+	private Pessoa empresaId;	
 
 	public Long getId() {
 		return id;
@@ -67,6 +72,14 @@ public class ItemPedido implements Serializable {
 
 	public void setQuantidade(Double quantidade) {
 		this.quantidade = quantidade;
+	}	
+
+	public Pessoa getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Pessoa empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override
