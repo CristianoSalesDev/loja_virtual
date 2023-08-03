@@ -1,13 +1,14 @@
 package com.br.lojavirtual;
 
+import java.util.Calendar;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 
+import com.br.lojavirtual.controller.PessoaController;
 import com.br.lojavirtual.model.PessoaJuridica;
-import com.br.lojavirtual.repository.PessoaRepository;
-import com.br.lojavirtual.service.PessoaUserService;
 
 import junit.framework.TestCase;
 
@@ -16,26 +17,24 @@ import junit.framework.TestCase;
 public class TestePessoaUsuario extends TestCase {
 
 	@Autowired
-	private PessoaUserService pessoaUserService;
+	private PessoaController pessoaController;
 	
-	@Autowired
-	private PessoaRepository pessoaRepository;  
-	
-		
 	@Test
-	public void testCadPessoaFisica() {
+	public void testCadPessoaFisica() throws ExceptionLojaVirtual {
 		
 		PessoaJuridica pessoaJuridica = new PessoaJuridica();
-		pessoaJuridica.setCnpj("865545598956556");
-		pessoaJuridica.setNome("Alex fernando");
-		pessoaJuridica.setEmail("alex.fernando.egidio@gmail.com");
+		pessoaJuridica.setCnpj("" + Calendar.getInstance().getTimeInMillis());
+		pessoaJuridica.setNome("Cristiano Aragão");
+		pessoaJuridica.setEmail("cristianoaragaosales@gmail.com");
 		pessoaJuridica.setTelefone("45999795800");
 		pessoaJuridica.setInscricaoEstadual("65556565656665");
 		pessoaJuridica.setInscricaoMunicipal("55554565656565");
 		pessoaJuridica.setNomeFantasia("54556565665");
 		pessoaJuridica.setRazaoSocial("4656656566");
 		
-		pessoaRepository.save(pessoaJuridica);
+//		pessoaRepository.save(pessoaJuridica);
+		
+		pessoaController.salvarPj(pessoaJuridica);
 		
 		/*
 		PessoaFisica pessoaFisica = new PessoaFisica();
