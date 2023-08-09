@@ -1,5 +1,7 @@
 package com.br.lojavirtual.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,6 +16,9 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long>  {
 	
 	@Query("select u from Usuario u where upper(trim(u.login)) like %?1%")
 	Usuario findUsuarioByLogin(String login);
+	
+	@Query(value = "select u from Usuario u where u.data_atual_senha <= current_date - 90")
+	List<Usuario> usuarioSenhaVencida();	
 
 	@Query(value = "select u from Usuario u where u.pessoa.id = ?1 or u.login =?2")
 	Usuario findUserByPessoa(Long id, String email);
@@ -25,5 +30,10 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long>  {
 	@Modifying
 	@Query(nativeQuery = true, value = "insert into t_usuario_acesso(usuario_id, acesso_id) values (?1, (select id from t_acesso where descricao = 'ROLE_USER'))")
 	void insereAcessoUserPj(Long iduser);	
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery = true, value = "insert into t_usuario_acesso(usuario_id, acesso_id) values (?1, (select id from t_acesso where descricao = ?2 limit 1))")
+	void insereAcessoUserPj(Long iduser, String acesso);	
 
 }
