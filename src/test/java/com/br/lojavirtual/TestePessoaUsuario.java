@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Profile;
 import com.br.lojavirtual.controller.PessoaController;
 import com.br.lojavirtual.enums.TipoEndereco;
 import com.br.lojavirtual.model.Endereco;
+import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.PessoaJuridica;
+import com.br.lojavirtual.repository.PessoaRepository;
 
 import junit.framework.TestCase;
 
@@ -21,8 +23,11 @@ public class TestePessoaUsuario extends TestCase {
 	@Autowired
 	private PessoaController pessoaController;
 	
+	@Autowired
+	private PessoaRepository pessoaRepository;
+	
 	@Test
-	public void testCadPessoaFisica() throws ExceptionLojaVirtual {
+	public void testCadPessoaJuridica() throws ExceptionLojaVirtual {
 		
 		PessoaJuridica pessoaJuridica = new PessoaJuridica();
 		pessoaJuridica.setCnpj("" + Calendar.getInstance().getTimeInMillis());
@@ -71,6 +76,57 @@ public class TestePessoaUsuario extends TestCase {
 		}
 		
 		assertEquals(2, pessoaJuridica.getEnderecos().size());
+		
+	}	
+	
+	@Test
+	public void testCadPessoaFisica() throws ExceptionLojaVirtual {
+		
+		PessoaJuridica pessoaJuridica = pessoaRepository.existeCnpjCadastrado("1691451450865");
+		
+		PessoaFisica pessoaFisica = new PessoaFisica();
+		pessoaFisica.setCpf("626.789.890-38");
+		pessoaFisica.setNome("Cristiano Aragão");
+		pessoaFisica.setEmail("teste_acesso_cpf4@gmail.com");
+		pessoaFisica.setTelefone("45999795800");
+		pessoaFisica.setEmpresaId(pessoaJuridica);
+		
+		Endereco endereco1 = new Endereco();
+		endereco1.setBairro("Jd Dias");
+		endereco1.setCep("556556565");
+		endereco1.setComplemento("Casa cinza");
+		endereco1.setNumero("389");
+		endereco1.setPessoa(pessoaFisica);
+		endereco1.setLogradouro("Av. são joao sexto");
+		endereco1.setTipoEndereco(TipoEndereco.COBRANCA);
+		endereco1.setUf("PR");
+		endereco1.setCidade("Curitiba");
+		endereco1.setEmpresaId(pessoaJuridica);
+		
+		Endereco endereco2 = new Endereco();
+		endereco2.setBairro("Jd Maracana");
+		endereco2.setCep("7878778");
+		endereco2.setComplemento("Andar 4");
+		endereco2.setNumero("555");
+		endereco2.setPessoa(pessoaFisica);
+		endereco2.setLogradouro("Av. maringá");
+		endereco2.setTipoEndereco(TipoEndereco.ENTREGA);
+		endereco2.setUf("PR");
+		endereco2.setCidade("Curitiba");
+		endereco2.setEmpresaId(pessoaJuridica);
+		
+		pessoaFisica.getEnderecos().add(endereco2);
+		pessoaFisica.getEnderecos().add(endereco1);
+
+		pessoaFisica = pessoaController.salvarPf(pessoaFisica).getBody();
+		
+		assertEquals(true, pessoaFisica.getId() > 0 );
+		
+		for (Endereco endereco : pessoaFisica.getEnderecos()) {
+			assertEquals(true, endereco.getId() > 0);
+		}
+		
+		assertEquals(2, pessoaFisica.getEnderecos().size());
 		
 	}
 	
