@@ -1,7 +1,5 @@
 package com.br.lojavirtual;
 
-import java.util.Calendar;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,12 +27,12 @@ public class TestePessoaUsuario extends TestCase {
 	@Test
 	public void testCadPessoaJuridica() throws ExceptionLojaVirtual {
 		
-		PessoaJuridica pessoaJuridica = new PessoaJuridica();
-		pessoaJuridica.setCnpj("" + Calendar.getInstance().getTimeInMillis());
+		PessoaJuridica pessoaJuridica = new PessoaJuridica();		
+		pessoaJuridica.setCnpj("23.577.851/0001-05");
 		pessoaJuridica.setNome("Cristiano Aragão");
-		pessoaJuridica.setEmail("teste_acesso@gmail.com");
+		pessoaJuridica.setEmail("portifolio.app@gmail.com");
 		pessoaJuridica.setTelefone("45999795800");
-		pessoaJuridica.setInscricaoEstadual("65556565656665");
+		pessoaJuridica.setInscricaoEstadual("060807890");
 		pessoaJuridica.setInscricaoMunicipal("55554565656565");
 		pessoaJuridica.setNomeFantasia("54556565665");
 		pessoaJuridica.setRazaoSocial("4656656566");
@@ -82,13 +80,13 @@ public class TestePessoaUsuario extends TestCase {
 	@Test
 	public void testCadPessoaFisica() throws ExceptionLojaVirtual {
 		
-		PessoaJuridica pessoaJuridica = pessoaRepository.existeCnpjCadastrado("1691451450865");
+		PessoaJuridica pessoaJuridica = pessoaRepository.existeCnpjCadastrado("1690937368885");
 		
 		PessoaFisica pessoaFisica = new PessoaFisica();
-		pessoaFisica.setCpf("626.789.890-38");
-		pessoaFisica.setNome("Cristiano Aragão");
-		pessoaFisica.setEmail("teste_acesso_cpf4@gmail.com");
-		pessoaFisica.setTelefone("45999795800");
+		pessoaFisica.setCpf("432.013.650-09");
+		pessoaFisica.setNome("Aragão");
+		pessoaFisica.setEmail("cristianoaragao@donizete.com.br");
+		pessoaFisica.setTelefone("85989009924");
 		pessoaFisica.setEmpresaId(pessoaJuridica);
 		
 		Endereco endereco1 = new Endereco();
