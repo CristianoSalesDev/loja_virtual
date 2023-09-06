@@ -66,7 +66,6 @@ public class PessoaController {
 			throw new ExceptionLojaVirtual("Já existe CPF cadastrado com o número: " + pessoaFisica.getCpf());
 		}
 		
-		
 		if (!ValidaCPF.isCPF(pessoaFisica.getCpf())) {
 			throw new ExceptionLojaVirtual("CPF : " + pessoaFisica.getCpf() + " está inválido.");
 		}

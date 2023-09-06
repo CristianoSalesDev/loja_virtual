@@ -83,9 +83,9 @@ public class TestePessoaUsuario extends TestCase {
 		PessoaJuridica pessoaJuridica = pessoaRepository.existeCnpjCadastrado("1690937368885");
 		
 		PessoaFisica pessoaFisica = new PessoaFisica();
-		pessoaFisica.setCpf("432.013.650-09");
+		pessoaFisica.setCpf("191.374.260-10");
 		pessoaFisica.setNome("Aragão");
-		pessoaFisica.setEmail("cristianoaragao@donizete.com.br");
+		pessoaFisica.setEmail("portifolio.app@gmail.com");
 		pessoaFisica.setTelefone("85989009924");
 		pessoaFisica.setEmpresaId(pessoaJuridica);
 		
