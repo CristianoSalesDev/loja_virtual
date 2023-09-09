@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
@@ -18,17 +19,18 @@ public class PessoaJuridica extends Pessoa {
 
 	private static final long serialVersionUID = 1L;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
+	@CNPJ(message = "Cnpj está inválido")
 	@Column(nullable = false)	
 	private String cnpj;
 		
 	private String inscricaoEstadual;
 	
 	private String inscricaoMunicipal;
-	
+		
 	@Column(nullable = false)
 	private String razaoSocial;
 	

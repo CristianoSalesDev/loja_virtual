@@ -34,7 +34,7 @@ public class Marca implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
-	
+
 	@Column(nullable = false)
 	private String descricao;
 	

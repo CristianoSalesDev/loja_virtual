@@ -36,14 +36,14 @@ public class Produto implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_produto")	
 	private Long id;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TipoUnidade tipoUnidade;
-		
+
 	@Column(nullable = false)
 	private String descricao;
 	
@@ -51,7 +51,6 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_prod_fk"))
 	private Pessoa empresaId;	
-	
 	
 	@Column(columnDefinition = "text", length = 2000)
 	private String detalhes;

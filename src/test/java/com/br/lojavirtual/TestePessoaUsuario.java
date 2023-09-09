@@ -28,11 +28,11 @@ public class TestePessoaUsuario extends TestCase {
 	public void testCadPessoaJuridica() throws ExceptionLojaVirtual {
 		
 		PessoaJuridica pessoaJuridica = new PessoaJuridica();		
-		pessoaJuridica.setCnpj("23.577.851/0001-05");
+		pessoaJuridica.setCnpj("32.093.900/0001-17");
 		pessoaJuridica.setNome("Cristiano Aragão");
-		pessoaJuridica.setEmail("portifolio.app@gmail.com");
+		pessoaJuridica.setEmail("abc12.app@gmail.com");
 		pessoaJuridica.setTelefone("45999795800");
-		pessoaJuridica.setInscricaoEstadual("060807890");
+		pessoaJuridica.setInscricaoEstadual("807801286");
 		pessoaJuridica.setInscricaoMunicipal("55554565656565");
 		pessoaJuridica.setNomeFantasia("54556565665");
 		pessoaJuridica.setRazaoSocial("4656656566");
@@ -83,9 +83,9 @@ public class TestePessoaUsuario extends TestCase {
 		PessoaJuridica pessoaJuridica = pessoaRepository.existeCnpjCadastrado("1690937368885");
 		
 		PessoaFisica pessoaFisica = new PessoaFisica();
-		pessoaFisica.setCpf("191.374.260-10");
+		pessoaFisica.setCpf("474.416.130-86");
 		pessoaFisica.setNome("Aragão");
-		pessoaFisica.setEmail("portifolio.app@gmail.com");
+		pessoaFisica.setEmail("portifolio7.app@gmail.com");
 		pessoaFisica.setTelefone("85989009924");
 		pessoaFisica.setEmpresaId(pessoaJuridica);
 		
