@@ -20,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -36,45 +37,49 @@ public class ContasPagar implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_contas_pagar")	
 	private Long id;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_pagamento;
-	
+
+	@NotNull(message = "Campo Data de vencimento obrigatório")
 	@Column(nullable = false)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_vencimento;	
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaFisica.class)
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
-	private Pessoa pessoa;
+	private PessoaFisica pessoaId;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
-	@JoinColumn(name = "pessoa_fornecedor_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fornecedor_fk"))
-	private Pessoa pessoa_fornecedor;
+	@ManyToOne(targetEntity = PessoaJuridica.class)
+	@JoinColumn(name = "pessoa_forn_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fornecedor_fk"))
+	private PessoaJuridica pessoa_fornecedor;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_cp_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 	
+	@NotNull(message = "Campo Status obrigatório")
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusContasPagar statusContasPagar;
 	
 	private BigDecimal valor_desconto;
 	
+	@NotNull(message = "Campo valor obrigatório")
 	@Column(nullable = false)
     private BigDecimal valor_total;
-    
+
+	@NotNull(message = "Campo descrição obrigatório")
     @Column(columnDefinition = "text", nullable = false)
     private String descricao;
 	
-	@Column(columnDefinition = "text")
+	@Column(columnDefinition = "text", length = 2000)
     private String observacao;
 
 	public Long getId() {
@@ -109,14 +114,6 @@ public class ContasPagar implements Serializable {
 		this.data_vencimento = data_vencimento;
 	}
 
-	public Pessoa getPessoa() {
-		return pessoa;
-	}
-
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
-	}
-
 	public BigDecimal getValor_desconto() {
 		return valor_desconto;
 	}
@@ -141,14 +138,6 @@ public class ContasPagar implements Serializable {
 		this.observacao = observacao;
 	}	
 
-	public Pessoa getPessoa_fornecedor() {
-		return pessoa_fornecedor;
-	}
-
-	public void setPessoa_fornecedor(Pessoa pessoa_fornecedor) {
-		this.pessoa_fornecedor = pessoa_fornecedor;
-	}
-
 	public StatusContasPagar getStatusContasPagar() {
 		return statusContasPagar;
 	}
@@ -165,13 +154,29 @@ public class ContasPagar implements Serializable {
 		this.descricao = descricao;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaFisica getPessoaId() {
+		return pessoaId;
+	}
+
+	public void setPessoaId(PessoaFisica pessoaId) {
+		this.pessoaId = pessoaId;
+	}
+
+	public PessoaJuridica getPessoa_fornecedor() {
+		return pessoa_fornecedor;
+	}
+
+	public void setPessoa_fornecedor(PessoaJuridica pessoa_fornecedor) {
+		this.pessoa_fornecedor = pessoa_fornecedor;
+	}
+
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
-	}
+	}	
 
 	@Override
 	public int hashCode() {

@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,14 +15,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.lojavirtual.ExceptionLojaVirtual;
+import com.br.lojavirtual.enums.TipoPessoa;
 import com.br.lojavirtual.model.Endereco;
 import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.PessoaJuridica;
 import com.br.lojavirtual.model.dto.CepDTO;
+import com.br.lojavirtual.model.dto.ConsultaCnpjDto;
 import com.br.lojavirtual.repository.EnderecoRepository;
 import com.br.lojavirtual.repository.PessoaRepository;
 import com.br.lojavirtual.repository.PesssoaFisicaRepository;
 import com.br.lojavirtual.service.PessoaUserService;
+import com.br.lojavirtual.service.ServiceContagemAcessoApi;
 import com.br.lojavirtual.util.ValidaCPF;
 import com.br.lojavirtual.util.ValidaCnpj;
 
@@ -43,7 +45,7 @@ public class PessoaController {
 	private PesssoaFisicaRepository pesssoaFisicaRepository;
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate; 
+	private ServiceContagemAcessoApi serviceContagemAcessoApi; 
 	
 	
 	@ResponseBody
@@ -52,7 +54,7 @@ public class PessoaController {
 		
 		List<PessoaFisica> fisicas = pesssoaFisicaRepository.pesquisaPorNomePF(nome.trim().toUpperCase());
 		
-		jdbcTemplate.execute("begin; update t_acesso_endpoint set qtd_acesso_endpoint = qtd_acesso_endpoint + 1 where nome_endpoint = 'END-POINT-NOME-PESSOA-FISICA'; commit;");
+		serviceContagemAcessoApi.atualizaAcessoEndPointPF();
 		
 		return new ResponseEntity<List<PessoaFisica>>(fisicas, HttpStatus.OK);
 	}
@@ -90,7 +92,15 @@ public class PessoaController {
 		
 	  return new ResponseEntity<CepDTO>(pessoaUserService.consultaCep(cep), HttpStatus.OK);
 		
-	}	
+	}
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaCnpjReceitaWs/{cnpj}")
+	public ResponseEntity<ConsultaCnpjDto> consultaCnpjReceitaWs(@PathVariable("cnpj") String cnpj){
+		
+	  return new ResponseEntity<ConsultaCnpjDto>(pessoaUserService.consultaCnpjReceitaWS(cnpj), HttpStatus.OK);
+		
+	}
 
 	/*end-point é microsservicos é um API*/
 	@ResponseBody
@@ -99,6 +109,10 @@ public class PessoaController {
 		
 		if (pessoaJuridica == null) {
 			throw new ExceptionLojaVirtual("Pessoa juridica não pode ser NULL");
+		}
+		
+		if (pessoaJuridica.getTipoPessoa() == null) {
+			throw new ExceptionLojaVirtual("Informe o tipo Jurídico ou Fornecedor da Loja");
 		}
 
 		if (pessoaJuridica.getId() == null && pessoaRepository.existeCnpjCadastrado(pessoaJuridica.getCnpj()) != null) {
@@ -158,6 +172,10 @@ public class PessoaController {
 		
 		if (pessoaFisica == null) {
 			throw new ExceptionLojaVirtual("Pessoa fisica não pode ser NULL");
+		}
+		
+		if (pessoaFisica.getTipoPessoa() == null) {
+			pessoaFisica.setTipoPessoa(TipoPessoa.FISICA.name());
 		}
 		
 		if (pessoaFisica.getId() == null && pessoaRepository.existeCpfCadastrado(pessoaFisica.getCpf()) != null) {

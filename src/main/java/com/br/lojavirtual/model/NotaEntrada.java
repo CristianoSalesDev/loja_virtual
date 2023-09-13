@@ -18,6 +18,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 @Entity
@@ -32,15 +34,17 @@ public class NotaEntrada implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_nota_entrada")	
 	private Long id;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_entrada = new Date();
 
+	@NotNull(message = "Informe a data da compra")
 	@Column(nullable = false)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_emissao;
 
+	@NotNull(message = "Informe o número da nota")
 	@Column(nullable = false)
     private String numeroNota;
     
@@ -48,29 +52,37 @@ public class NotaEntrada implements Serializable {
     
     private String chave;
     
+	@NotEmpty(message = "Informe a serie da nota")
+	@NotNull(message = "Informe a série da nota")
+	@Column(nullable = false)
     private String serie;
     
     private String observacao;
     
     private BigDecimal valorDesconto;
-    
+
+//    @Size(min = 1, message = "Informe o total da nota maior que R$ 1 real")    
+	@NotNull(message = "Informe o valor do ICMS")
+	@Column(nullable = false)
     private BigDecimal valorIcms;
     
     private BigDecimal valorIpi;
     
     private BigDecimal valorFrete;
     
-    @Column(nullable = false)
+  //  @Size(min = 1, message = "Informe o total da nota maior que R$ 1 real")
+	@NotNull(message = "Informe o total da nota")
+	@Column(nullable = false)
     private BigDecimal valorTotal;    
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
-	private Pessoa pessoa;
+	private PessoaJuridica pessoa;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ne_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 	
 	@ManyToOne
 	@JoinColumn(name = "contasPagarId", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "contasPagar_fk"))
@@ -180,14 +192,6 @@ public class NotaEntrada implements Serializable {
 		this.valorTotal = valorTotal;
 	}
 
-	public Pessoa getPessoa() {
-		return pessoa;
-	}
-
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
-	}
-
 	public ContasPagar getContasPagarId() {
 		return contasPagarId;
 	}
@@ -196,11 +200,19 @@ public class NotaEntrada implements Serializable {
 		this.contasPagarId = contasPagarId;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(PessoaJuridica pessoa) {
+		this.pessoa = pessoa;
+	}
+
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

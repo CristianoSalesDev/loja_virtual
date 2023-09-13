@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -35,15 +36,16 @@ public class Marca implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
+	@NotNull(message = "A Marca de ser informada")
 	@Column(nullable = false)
 	private String descricao;
 	
 	private Boolean ativo = Boolean.TRUE ;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_mar_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 	
 	public Long getId() {
 		return id;
@@ -77,11 +79,11 @@ public class Marca implements Serializable {
 		this.ativo = ativo;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

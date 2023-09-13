@@ -31,7 +31,7 @@ public class Categoria implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_categoria")	
 	private Long id;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
@@ -43,7 +43,7 @@ public class Categoria implements Serializable {
 	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_cat_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId = new PessoaJuridica();	
 
 	public Long getId() {
 		return id;
@@ -77,11 +77,11 @@ public class Categoria implements Serializable {
 		this.ativo = ativo;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 
@@ -101,7 +101,5 @@ public class Categoria implements Serializable {
 		Categoria other = (Categoria) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-
-	
+		
 }

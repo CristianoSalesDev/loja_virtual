@@ -8,8 +8,6 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,10 +18,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
-
-import com.br.lojavirtual.enums.TipoUnidade;
 
 @Entity
 @Table(name = "T_PRODUTO")
@@ -39,34 +37,59 @@ public class Produto implements Serializable {
 	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
-	
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private TipoUnidade tipoUnidade;
 
+	@NotNull(message = "O tipo da unidade deve ser informado")
+	@Column(nullable = false)
+    //@Enumerated(EnumType.STRING)
+	private String tipoUnidade;
+
+	@Size(min = 10, message = "Nome do produto deve ter mais de 10 letras")
+	@NotNull(message = "Nome do produto deve ser informado")
 	@Column(nullable = false)
 	private String descricao;
 	
+	@NotNull(message = "Fornecedor deve ser informada")
 	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_prod_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;
 	
-	@Column(columnDefinition = "text", length = 2000)
+	@NotNull(message = "A Categoria do Produto deve ser informada")
+	@ManyToOne(targetEntity = Categoria.class)
+	@JoinColumn(name = "categoria_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "categoria_id_fk"))
+	private Categoria categoriaId = new Categoria();
+	
+	@NotNull(message = "A Marca do Produto deve ser informada")
+	@ManyToOne(targetEntity = Marca.class)
+	@JoinColumn(name = "marca_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "marca_id_fk"))
+	private Marca marcaId = new Marca();
+	
+	@NotNull(message = "A Nota Item do Produto deve ser informada")
+	@ManyToOne(targetEntity = ItemEntrada.class)
+	@JoinColumn(name = "item_entrada_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "item_entrada_id_fk"))
+	private ItemEntrada itemEntradaId = new ItemEntrada();
+		
+	@NotNull(message = "Descrição do produto deve ser informada")	
+	@Column(columnDefinition = "text", length = 2000, nullable = false)
 	private String detalhes;
-	
+
+	@NotNull(message = "Peso deve ser informado")	
 	@Column(nullable = false)
     private Double peso;
     
+	@NotNull(message = "Altura deve ser informado")	
 	@Column(nullable = false)
     private Double altura;
     
+	@NotNull(message = "Largura deve ser informado")	
 	@Column(nullable = false)
     private Double largura;
-    
+
+	@NotNull(message = "Comprimento deve ser informado")
 	@Column(nullable = false)
     private Double comprimento;
     
+	@NotNull(message = "Valor de venda deve ser informado")	
 	@Column(nullable = false)
     private BigDecimal valor = BigDecimal.ZERO;
     
@@ -100,11 +123,11 @@ public class Produto implements Serializable {
 		this.data_cadastro = data_cadastro;
 	}
 
-	public TipoUnidade getTipoUnidade() {
+	public String getTipoUnidade() {
 		return tipoUnidade;
 	}
 
-	public void setTipoUnidade(TipoUnidade tipoUnidade) {
+	public void setTipoUnidade(String tipoUnidade) {
 		this.tipoUnidade = tipoUnidade;
 	}
 
@@ -211,13 +234,37 @@ public class Produto implements Serializable {
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}	
-
-	public Pessoa getEmpresaId() {
+	
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
+	}	
+
+	public Categoria getCategoriaId() {
+		return categoriaId;
+	}
+
+	public void setCategoriaId(Categoria categoriaId) {
+		this.categoriaId = categoriaId;
+	}	
+
+	public Marca getMarcaId() {
+		return marcaId;
+	}
+
+	public void setMarcaId(Marca marcaId) {
+		this.marcaId = marcaId;
+	}	
+
+	public ItemEntrada getItemEntradaId() {
+		return itemEntradaId;
+	}
+
+	public void setItemEntradaId(ItemEntrada itemEntradaId) {
+		this.itemEntradaId = itemEntradaId;
 	}
 
 	@Override
