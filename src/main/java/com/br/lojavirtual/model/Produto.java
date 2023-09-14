@@ -63,12 +63,7 @@ public class Produto implements Serializable {
 	@ManyToOne(targetEntity = Marca.class)
 	@JoinColumn(name = "marca_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "marca_id_fk"))
 	private Marca marcaId = new Marca();
-	
-	@NotNull(message = "A Nota Item do Produto deve ser informada")
-	@ManyToOne(targetEntity = ItemEntrada.class)
-	@JoinColumn(name = "item_entrada_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "item_entrada_id_fk"))
-	private ItemEntrada itemEntradaId = new ItemEntrada();
-		
+
 	@NotNull(message = "Descrição do produto deve ser informada")	
 	@Column(columnDefinition = "text", length = 2000, nullable = false)
 	private String detalhes;
@@ -258,14 +253,6 @@ public class Produto implements Serializable {
 	public void setMarcaId(Marca marcaId) {
 		this.marcaId = marcaId;
 	}	
-
-	public ItemEntrada getItemEntradaId() {
-		return itemEntradaId;
-	}
-
-	public void setItemEntradaId(ItemEntrada itemEntradaId) {
-		this.itemEntradaId = itemEntradaId;
-	}
 
 	@Override
 	public int hashCode() {

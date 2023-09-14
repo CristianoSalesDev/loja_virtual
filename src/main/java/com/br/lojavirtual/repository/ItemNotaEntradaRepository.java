@@ -15,12 +15,12 @@ import com.br.lojavirtual.model.NotaEntrada;
 @Transactional
 public interface ItemNotaEntradaRepository extends JpaRepository<ItemEntrada, Long> {
 
-	@Query("select a from ItemEntrada a where a.produtoId.id = ?1 and a.notaEntradaId.id = ?2")
-	List<ItemEntrada> buscaItemEntradaPorProdutoNota(Long produtoId, Long notaEntradaId);
+	@Query("select a from ItemEntrada a where a.produto_id.id = ?1 and a.notaEntradaId.id = ?2")
+	List<ItemEntrada> buscaItemEntradaPorProdutoNota(Long produto_id, Long notaEntradaId);
 	
 	
-	@Query("select a from ItemEntrada a where a.produtoId.id = ?1")
-	List<ItemEntrada> buscaItemEntradaPorProduto(Long produtoId);
+	@Query("select a from ItemEntrada a where a.produto_id.id = ?1")
+	List<ItemEntrada> buscaItemEntradaPorProduto(Long produto_id);
 	
 	
 	@Query("select a from ItemEntrada a where a.notaEntradaId.id = ?2")
