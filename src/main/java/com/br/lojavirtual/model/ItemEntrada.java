@@ -35,10 +35,10 @@ public class ItemEntrada implements Serializable {
 	@JoinColumn(name = "nota_entrada_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "nota_entrada_fk"))
 	private NotaEntrada notaEntradaId;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ie_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 	
 	@Column(nullable = false)
     private Double quantidade;
@@ -107,11 +107,11 @@ public class ItemEntrada implements Serializable {
 		this.notaEntradaId = notaEntradaId;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 
