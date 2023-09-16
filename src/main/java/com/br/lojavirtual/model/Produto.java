@@ -2,18 +2,23 @@ package com.br.lojavirtual.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -49,7 +54,7 @@ public class Produto implements Serializable {
 	private String descricao;
 	
 	@NotNull(message = "Fornecedor deve ser informada")
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_prod_fk"))
 	private PessoaJuridica empresaId;
@@ -89,9 +94,9 @@ public class Produto implements Serializable {
     private BigDecimal valor = BigDecimal.ZERO;
     
 	@Column(nullable = false)
-    private Integer QtdeEstoque = 0;
+    private Integer qtdeEstoque = 0;
     
-    private Integer QtdeAlertaEstoque = 0;
+    private Integer qtdeAlertaEstoque = 0;
     
     private String link;
     
@@ -101,6 +106,17 @@ public class Produto implements Serializable {
 	
     @Column(nullable = false)
 	private Boolean ativo = Boolean.TRUE;
+    
+	@OneToMany(mappedBy = "produto", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<ImagemProduto> imagens = new ArrayList<ImagemProduto>();	
+
+	public List<ImagemProduto> getImagens() {
+		return imagens;
+	}
+
+	public void setImagens(List<ImagemProduto> imagens) {
+		this.imagens = imagens;
+	}
 
 	public Long getId() {
 		return id;
@@ -183,19 +199,19 @@ public class Produto implements Serializable {
 	}
 
 	public Integer getQtdeEstoque() {
-		return QtdeEstoque;
+		return qtdeEstoque;
 	}
 
 	public void setQtdeEstoque(Integer qtdeEstoque) {
-		QtdeEstoque = qtdeEstoque;
+		this.qtdeEstoque = qtdeEstoque;
 	}
 
 	public Integer getQtdeAlertaEstoque() {
-		return QtdeAlertaEstoque;
+		return qtdeAlertaEstoque;
 	}
 
 	public void setQtdeAlertaEstoque(Integer qtdeAlertaEstoque) {
-		QtdeAlertaEstoque = qtdeAlertaEstoque;
+		this.qtdeAlertaEstoque = qtdeAlertaEstoque;
 	}
 
 	public String getLink() {

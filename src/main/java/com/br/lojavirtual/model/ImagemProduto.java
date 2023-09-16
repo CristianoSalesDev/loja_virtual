@@ -20,6 +20,8 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "T_IMAGEM_PRODUTO")
 @SequenceGenerator(name = "seq_img_produto", sequenceName = "seq_img_produto", allocationSize = 1, initialValue = 1)
@@ -41,16 +43,18 @@ public class ImagemProduto implements Serializable {
 	@Column(columnDefinition = "text", nullable = false)
 	private String imagem_miniatura;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "produto_fk"))
 	private Produto produto;
 	
 	private Boolean ativo = Boolean.TRUE;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@JsonIgnore
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ip_fk"))
-	private Pessoa empresaId;		
+	private PessoaJuridica empresaId;		
 
 	public Long getId() {
 		return id;
@@ -100,11 +104,11 @@ public class ImagemProduto implements Serializable {
 		this.ativo = ativo;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

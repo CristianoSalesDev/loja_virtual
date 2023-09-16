@@ -1,8 +1,16 @@
 package com.br.lojavirtual.controller;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.lojavirtual.ExceptionLojaVirtual;
 import com.br.lojavirtual.model.Produto;
 import com.br.lojavirtual.repository.ProdutoRepository;
+import com.br.lojavirtual.service.ServiceSendEmail;
 
 @Controller
 @RestController
@@ -27,9 +36,20 @@ public class ProdutoController {
 	@Autowired
 	private ProdutoRepository produtoRepository;
 	
+	@Autowired
+	private ServiceSendEmail serviceSendEmail; 
+	
 	@ResponseBody /*Poder dar um retorno da API*/
 	@PostMapping(value = "**/salvarProduto") /*Mapeando a url para receber JSON*/
-	public ResponseEntity<Produto> salvarProduto(@RequestBody @Valid Produto produto) throws ExceptionLojaVirtual { /*Recebe o JSON e converte pra Objeto*/
+	public ResponseEntity<Produto> salvarProduto(@RequestBody @Valid Produto produto) throws ExceptionLojaVirtual, MessagingException, IOException { /*Recebe o JSON e converte pra Objeto*/
+
+		if (produto.getTipoUnidade() == null || produto.getTipoUnidade().trim().isEmpty()) {
+			throw new ExceptionLojaVirtual("Tipo da unidade deve ser informada");
+		}
+		
+		if (produto.getDescricao().length() < 10) {
+			throw new ExceptionLojaVirtual("Nome do produto deve ter mais de 10 letras.");
+		}
 		
 		if (produto.getEmpresaId() == null || produto.getEmpresaId().getId() <= 0) {
 			throw new ExceptionLojaVirtual("Fornecedor deve ser informado");
@@ -51,8 +71,82 @@ public class ProdutoController {
 			throw new ExceptionLojaVirtual("Marca deve ser informada");
 		}
 		
+		if (produto.getQtdeEstoque() < 1) {
+			throw new ExceptionLojaVirtual("O produto dever ter no minímo 1 no estoque.");
+		}
+		
+		if (produto.getImagens() == null || produto.getImagens().isEmpty() || produto.getImagens().size() == 0) {
+			throw new ExceptionLojaVirtual("Deve ser informado imagens para o produto.");
+		}
+		
+		if (produto.getImagens().size() < 3) {
+			throw new ExceptionLojaVirtual("Deve ser informado pelo menos 3 imagens para o produto.");
+		}
+		
+		if (produto.getImagens().size() > 6) {
+			throw new ExceptionLojaVirtual("Deve ser informado no máximo 6 imagens.");
+		}
+
+		if (produto.getId() == null) {
+			
+			for (int x = 0; x < produto.getImagens().size(); x++) {
+				produto.getImagens().get(x).setProduto(produto);
+				produto.getImagens().get(x).setEmpresaId(produto.getEmpresaId());
+				
+				String base64Image = "";
+				
+				if (produto.getImagens().get(x).getImagem_orginal().contains("data:image")) {
+					base64Image = produto.getImagens().get(x).getImagem_orginal().split(",")[1];
+				}else {
+					base64Image = produto.getImagens().get(x).getImagem_orginal();
+				}
+				
+				byte[] imageBytes =  DatatypeConverter.parseBase64Binary(base64Image);
+				
+				BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+				
+				if (bufferedImage != null) {
+					
+					int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+					int largura = Integer.parseInt("800");
+					int altura = Integer.parseInt("600");
+					
+					BufferedImage resizedImage = new BufferedImage(largura, altura, type);
+					Graphics2D g = resizedImage.createGraphics();
+					g.drawImage(bufferedImage, 0, 0, largura, altura, null);
+					g.dispose();
+					
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(resizedImage, "png", baos);
+					
+					String miniImgBase64 = "data:image/png;base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
+					
+					produto.getImagens().get(x).setImagem_miniatura(miniImgBase64);
+					
+					bufferedImage.flush();
+					resizedImage.flush();
+					baos.flush();
+					baos.close();
+					
+				}
+			}
+		}		
 		
 		Produto produtoSalvo = produtoRepository.save(produto);
+		
+		if (produto.getAlertaQtdeEstoque() && produto.getQtdeEstoque() <= 1) {
+			
+			StringBuilder html = new StringBuilder();
+			html.append("<h2>")
+			.append("Produto: " + produto.getDescricao())
+			.append(" com estoque baixo: " + produto.getQtdeEstoque());
+			html.append("<p> Id Prod.:").append(produto.getId()).append("</p>");
+			
+			if (produto.getEmpresaId().getEmail() != null) {
+				serviceSendEmail.enviarEmailHtml("Produto sem estoque" , html.toString(), produto.getEmpresaId().getEmail());
+			}
+		}
+		
 		
 		return new ResponseEntity<Produto>(produtoSalvo, HttpStatus.OK);
 	}
