@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "T_IMAGEM_PRODUTO")
@@ -33,24 +33,24 @@ public class ImagemProduto implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_img_produto")	
 	private Long id;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
 	@Column(columnDefinition = "text", nullable = false)
-	private String imagem_orginal;
+	private String imagemOriginal;
 	
 	@Column(columnDefinition = "text", nullable = false)
-	private String imagem_miniatura;
+	private String imagemMiniatura;
 	
-	@JsonIgnore
+	@JsonIgnoreProperties(allowGetters = true)
 	@ManyToOne
 	@JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "produto_fk"))
 	private Produto produto;
 	
 	private Boolean ativo = Boolean.TRUE;
 	
-	@JsonIgnore
+	@JsonIgnoreProperties(allowGetters = true)
 	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ip_fk"))
@@ -72,20 +72,21 @@ public class ImagemProduto implements Serializable {
 		this.data_cadastro = data_cadastro;
 	}
 
-	public String getImagem_orginal() {
-		return imagem_orginal;
+
+	public String getImagemOriginal() {
+		return imagemOriginal;
 	}
 
-	public void setImagem_orginal(String imagem_orginal) {
-		this.imagem_orginal = imagem_orginal;
+	public void setImagemOriginal(String imagemOriginal) {
+		this.imagemOriginal = imagemOriginal;
 	}
 
-	public String getImagem_miniatura() {
-		return imagem_miniatura;
+	public String getImagemMiniatura() {
+		return imagemMiniatura;
 	}
 
-	public void setImagem_miniatura(String imagem_miniatura) {
-		this.imagem_miniatura = imagem_miniatura;
+	public void setImagemMiniatura(String imagemMiniatura) {
+		this.imagemMiniatura = imagemMiniatura;
 	}
 
 	public Produto getProduto() {

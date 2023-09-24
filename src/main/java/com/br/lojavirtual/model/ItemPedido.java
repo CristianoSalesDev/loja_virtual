@@ -37,10 +37,10 @@ public class ItemPedido implements Serializable {
 	@Column(nullable = false)
     private Double quantidade;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_iped_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 
 	public Long getId() {
 		return id;
@@ -74,11 +74,11 @@ public class ItemPedido implements Serializable {
 		this.quantidade = quantidade;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

@@ -28,13 +28,13 @@ public class NFe implements Serializable {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
+	@JoinColumn(name = "pedido_id", nullable = true, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_nfe_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 
 	@Column(nullable = false)
 	private String numero;
@@ -107,11 +107,11 @@ public class NFe implements Serializable {
 		this.pedidoId = pedidoId;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

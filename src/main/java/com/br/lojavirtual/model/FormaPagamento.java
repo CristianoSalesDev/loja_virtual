@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -31,19 +32,21 @@ public class FormaPagamento implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_fp")	
 	private Long id;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 
+	@NotNull(message = "Descrição deve ser informada")
 	@Column(nullable = false)
 	private String descricao;
 	
 	private Boolean ativo = Boolean.TRUE;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@NotNull(message = "Empresa deve ser informada")
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fp_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 
 	public Long getId() {
 		return id;
@@ -77,11 +80,11 @@ public class FormaPagamento implements Serializable {
 		this.ativo = ativo;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

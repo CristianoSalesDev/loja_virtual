@@ -30,7 +30,7 @@ public class StatusRastreio implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_status_rastreio")	
 	private Long id;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
@@ -38,10 +38,10 @@ public class StatusRastreio implements Serializable {
 	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_sr_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 	
 	private String centroDistribuicao;
 	
@@ -107,11 +107,11 @@ public class StatusRastreio implements Serializable {
 		this.pedidoId = pedidoId;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

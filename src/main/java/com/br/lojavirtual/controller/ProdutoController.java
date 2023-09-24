@@ -95,10 +95,10 @@ public class ProdutoController {
 				
 				String base64Image = "";
 				
-				if (produto.getImagens().get(x).getImagem_orginal().contains("data:image")) {
-					base64Image = produto.getImagens().get(x).getImagem_orginal().split(",")[1];
+				if (produto.getImagens().get(x).getImagemOriginal().contains("data:image")) {
+					base64Image = produto.getImagens().get(x).getImagemOriginal().split(",")[1];
 				}else {
-					base64Image = produto.getImagens().get(x).getImagem_orginal();
+					base64Image = produto.getImagens().get(x).getImagemOriginal();
 				}
 				
 				byte[] imageBytes =  DatatypeConverter.parseBase64Binary(base64Image);
@@ -121,7 +121,7 @@ public class ProdutoController {
 					
 					String miniImgBase64 = "data:image/png;base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
 					
-					produto.getImagens().get(x).setImagem_miniatura(miniImgBase64);
+					produto.getImagens().get(x).setImagemMiniatura(miniImgBase64);
 					
 					bufferedImage.flush();
 					resizedImage.flush();
