@@ -2,19 +2,23 @@ package com.br.lojavirtual.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -66,6 +70,9 @@ public class Pedido implements Serializable {
 	@JoinColumn(name = "nfe_id", nullable = true, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "nfe_fk"))    
     private NFe nfeId;
 	
+	@OneToMany(mappedBy = "pedidoId", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<ItemPedido> itemPedidoId = new ArrayList<ItemPedido>();
+	
 	@NotNull(message = "O endereço de entrega deve ser informado")
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "endereco_entrega_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "endereco_entrega_fk"))	
@@ -102,6 +109,8 @@ public class Pedido implements Serializable {
 
 	@Column(columnDefinition = "text", nullable = true)
 	private String observacao;
+	
+	private Boolean excluido = Boolean.FALSE;
 
 	public Long getId() {
 		return id;
@@ -221,6 +230,22 @@ public class Pedido implements Serializable {
 	
 	public PessoaJuridica getEmpresaId() {
 		return empresaId;
+	}	
+
+	public List<ItemPedido> getItemPedidoId() {
+		return itemPedidoId;
+	}
+
+	public void setItemPedidoId(List<ItemPedido> itemPedidoId) {
+		this.itemPedidoId = itemPedidoId;
+	}	
+
+	public Boolean getExcluido() {
+		return excluido;
+	}
+
+	public void setExcluido(Boolean excluido) {
+		this.excluido = excluido;
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class ItemPedido implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "produto_fk"))
-	private Produto produto_id;
+	private Produto produtoId;
 
 	@ManyToOne
 	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
@@ -51,11 +51,11 @@ public class ItemPedido implements Serializable {
 	}
 
 	public Produto getProduto_id() {
-		return produto_id;
+		return produtoId;
 	}
 
 	public void setProduto_id(Produto produto_id) {
-		this.produto_id = produto_id;
+		this.produtoId = produto_id;
 	}
 
 	public Pedido getPedidoId() {
