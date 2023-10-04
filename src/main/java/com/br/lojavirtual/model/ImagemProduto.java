@@ -46,7 +46,7 @@ public class ImagemProduto implements Serializable {
 	@JsonIgnoreProperties(allowGetters = true)
 	@ManyToOne
 	@JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "produto_fk"))
-	private Produto produto;
+	private Produto produtoId;
 	
 	private Boolean ativo = Boolean.TRUE;
 	
@@ -89,12 +89,12 @@ public class ImagemProduto implements Serializable {
 		this.imagemMiniatura = imagemMiniatura;
 	}
 
-	public Produto getProduto() {
-		return produto;
+	public Produto getProdutoId() {
+		return produtoId;
 	}
 
-	public void setProduto(Produto produto) {
-		this.produto = produto;
+	public void setProdutoId(Produto produtoId) {
+		this.produtoId = produtoId;
 	}
 
 	public Boolean getAtivo() {

@@ -42,20 +42,20 @@ public class ItemPedido implements Serializable {
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_iped_fk"))
 	private PessoaJuridica empresaId;	
 
+	public Produto getProdutoId() {
+		return produtoId;
+	}
+
+	public void setProdutoId(Produto produtoId) {
+		this.produtoId = produtoId;
+	}
+
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Produto getProduto_id() {
-		return produtoId;
-	}
-
-	public void setProduto_id(Produto produto_id) {
-		this.produtoId = produto_id;
 	}
 
 	public Pedido getPedidoId() {

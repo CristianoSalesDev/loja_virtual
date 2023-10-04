@@ -90,7 +90,7 @@ public class ProdutoController {
 		if (produto.getId() == null) {
 			
 			for (int x = 0; x < produto.getImagens().size(); x++) {
-				produto.getImagens().get(x).setProduto(produto);
+				produto.getImagens().get(x).setProdutoId(produto);
 				produto.getImagens().get(x).setEmpresaId(produto.getEmpresaId());
 				
 				String base64Image = "";

@@ -1,6 +1,9 @@
 package com.br.lojavirtual.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -104,7 +107,7 @@ public class PedidoController {
 		pedidosDTO.setEntrega(pedido.getEnderecoEntrega());
 		pedidosDTO.setCobranca(pedido.getEnderecoCobranca());
 
-		pedidosDTO.setValorDesc(pedido.getValorDesconto());
+		pedidosDTO.setValorDesconto(pedido.getValorDesconto());
 		pedidosDTO.setValorFrete(pedido.getValorFrete());
 		pedidosDTO.setId(pedido.getId());
 		
@@ -112,7 +115,7 @@ public class PedidoController {
 
 			ItemPedidoDto itemVendaDTO = new ItemPedidoDto();
 			itemVendaDTO.setQuantidade(item.getQuantidade());
-			itemVendaDTO.setProduto(item.getProduto_id());
+			itemVendaDTO.setProduto(item.getProdutoId());
 
 			pedidosDTO.getItemPedido().add(itemVendaDTO);
 		}
@@ -138,7 +141,7 @@ public class PedidoController {
 		pedidoDTO.setEntrega(pedido.getEnderecoEntrega());
 		pedidoDTO.setCobranca(pedido.getEnderecoCobranca());
 
-		pedidoDTO.setValorDesc(pedido.getValorDesconto());
+		pedidoDTO.setValorDesconto(pedido.getValorDesconto());
 		pedidoDTO.setValorFrete(pedido.getValorFrete());
 		pedidoDTO.setId(pedido.getId());
 
@@ -146,7 +149,7 @@ public class PedidoController {
 
 			ItemPedidoDto itemVendaDTO = new ItemPedidoDto();
 			itemVendaDTO.setQuantidade(item.getQuantidade());
-			itemVendaDTO.setProduto(item.getProduto_id());
+			itemVendaDTO.setProduto(item.getProdutoId());
 
 			pedidoDTO.getItemPedido().add(itemVendaDTO);
 		}
@@ -181,6 +184,54 @@ public class PedidoController {
 		pedidoService.ativarPedidoExcluido(idPedido);
 		
 		return new ResponseEntity<String>("Venda ativada logicamente com sucesso.",HttpStatus.OK);
+		
+	}
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaVendaDinamicaPorData/{data1}/{data2}")
+	public ResponseEntity<List<PedidoDTO>> 
+	                            consultaVendaDinamicaPorData(
+	                            		@PathVariable("data1") String data1,
+	                            		@PathVariable("data2") String data2) throws ParseException{
+		
+		List<Pedido> pedido = null;
+		
+		pedido = pedidoService.consultaVendaPorData(data1, data2);
+		
+		if (pedido == null) {
+			pedido = new ArrayList<Pedido>();
+		}
+		
+        List<PedidoDTO> pedidoDTOList = new ArrayList<PedidoDTO>();
+		
+		for (Pedido ped : pedido) {
+			
+			PedidoDTO pedidoDTO = new PedidoDTO();
+	
+			pedidoDTO.setValorTotal(ped.getValorTotal());
+			pedidoDTO.setPessoa(ped.getPessoa());
+	
+			pedidoDTO.setEntrega(ped.getEnderecoEntrega());
+			pedidoDTO.setCobranca(ped.getEnderecoCobranca());
+	
+			pedidoDTO.setValorDesconto(ped.getValorDesconto());
+			pedidoDTO.setValorFrete(ped.getValorFrete());
+			pedidoDTO.setId(ped.getId());
+
+			for (ItemPedido item : ped.getItemPedidoId()) {
+	
+				ItemPedidoDto itemPedidoDtO = new ItemPedidoDto();
+				itemPedidoDtO.setQuantidade(item.getQuantidade());
+				itemPedidoDtO.setProduto(item.getProdutoId());
+	
+				pedidoDTO.getItemPedido().add(itemPedidoDtO);
+			}
+			
+			pedidoDTOList.add(pedidoDTO);
+		
+		}
+
+		return new ResponseEntity<List<PedidoDTO>>(pedidoDTOList, HttpStatus.OK);
 		
 	}
 	
@@ -224,7 +275,7 @@ public class PedidoController {
 			pedidoDTO.setEntrega(ped.getEnderecoEntrega());
 			pedidoDTO.setCobranca(ped.getEnderecoCobranca());
 	
-			pedidoDTO.setValorDesc(ped.getValorDesconto());
+			pedidoDTO.setValorDesconto(ped.getValorDesconto());
 			pedidoDTO.setValorFrete(ped.getValorFrete());
 			pedidoDTO.setId(ped.getId());
 
@@ -232,7 +283,7 @@ public class PedidoController {
 	
 				ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
 				itemPedidoDTO.setQuantidade(item.getQuantidade());
-				itemPedidoDTO.setProduto(item.getProduto_id());
+				itemPedidoDTO.setProduto(item.getProdutoId());
 	
 				pedidoDTO.getItemPedido().add(itemPedidoDTO);
 			}
@@ -266,7 +317,7 @@ public class PedidoController {
 			pedidoDTO.setEntrega(ped.getEnderecoEntrega());
 			pedidoDTO.setCobranca(ped.getEnderecoCobranca());
 	
-			pedidoDTO.setValorDesc(ped.getValorDesconto());
+			pedidoDTO.setValorDesconto(ped.getValorDesconto());
 			pedidoDTO.setValorFrete(ped.getValorFrete());
 			pedidoDTO.setId(ped.getId());
 
@@ -274,7 +325,7 @@ public class PedidoController {
 	
 				ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
 				itemPedidoDTO.setQuantidade(item.getQuantidade());
-				itemPedidoDTO.setProduto(item.getProduto_id());
+				itemPedidoDTO.setProduto(item.getProdutoId());
 	
 				pedidoDTO.getItemPedido().add(itemPedidoDTO);
 			}

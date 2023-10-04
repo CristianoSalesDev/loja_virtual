@@ -13,7 +13,7 @@ public class PedidoDTO {
 
 	private BigDecimal valorTotal;
 
-	private BigDecimal valorDesc;
+	private BigDecimal valorDesconto;
 
 	private Pessoa pessoa;
 
@@ -41,20 +41,20 @@ public class PedidoDTO {
 		this.valorTotal = valorTotal;
 	}
 
-	public BigDecimal getValorDesc() {
-		return valorDesc;
-	}
-
-	public void setValorDesc(BigDecimal valorDesc) {
-		this.valorDesc = valorDesc;
-	}
-
 	public Pessoa getPessoa() {
 		return pessoa;
 	}
 
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
+	}
+
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
 	}
 
 	public Endereco getCobranca() {

@@ -12,7 +12,7 @@ public class ImagemProdutoDTO implements Serializable {
 
 	private String imagemMiniatura;
 
-	private Long produto;
+	private Long produtoId;
 
 	private Long empresaId;
 
@@ -40,12 +40,12 @@ public class ImagemProdutoDTO implements Serializable {
 		this.imagemMiniatura = imagemMiniatura;
 	}
 
-	public Long getProduto() {
-		return produto;
+	public Long getProdutoId() {
+		return produtoId;
 	}
 
-	public void setProduto(Long produto) {
-		this.produto = produto;
+	public void setProdutoId(Long produtoId) {
+		this.produtoId = produtoId;
 	}
 
 	public Long getEmpresaId() {

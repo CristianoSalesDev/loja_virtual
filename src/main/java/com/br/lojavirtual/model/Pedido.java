@@ -51,7 +51,13 @@ public class Pedido implements Serializable {
 	@Column(nullable = false)
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
-	private Date data_entrega;
+	private Date dataEntrega;
+	
+	@NotNull(message = "Data da venda deve ser informada")
+	@Column(nullable = false)
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
+	@Temporal(TemporalType.DATE)
+	private Date dataVenda;	
 	
 	@NotNull(message = "Cliente deve ser informado")
 	@ManyToOne(targetEntity = PessoaFisica.class, cascade = CascadeType.ALL)
@@ -128,12 +134,20 @@ public class Pedido implements Serializable {
 		this.data_cadastro = data_cadastro;
 	}
 
-	public Date getData_entrega() {
-		return data_entrega;
+	public Date getDataEntrega() {
+		return dataEntrega;
 	}
 
-	public void setData_entrega(Date data_entrega) {
-		this.data_entrega = data_entrega;
+	public void setDataEntrega(Date dataEntrega) {
+		this.dataEntrega = dataEntrega;
+	}
+
+	public Date getDataVenda() {
+		return dataVenda;
+	}
+
+	public void setDataVenda(Date dataVenda) {
+		this.dataVenda = dataVenda;
 	}
 
 	public PessoaFisica getPessoa() {
