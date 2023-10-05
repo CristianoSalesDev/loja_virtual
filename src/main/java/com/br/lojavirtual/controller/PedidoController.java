@@ -335,5 +335,47 @@ public class PedidoController {
 		}
 
 		return new ResponseEntity<List<PedidoDTO>>(pedidoDTOList, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaPorClienteId/{idCliente}")
+	public ResponseEntity<List<PedidoDTO>> consultaPorClienteId(@PathVariable("idCliente") Long idCliente) {
+
+		List<Pedido> pedido = pedidoRepository.consultaPorIdCliente(idCliente);
+		
+		if (pedido == null) {
+			pedido = new ArrayList<Pedido>();
+		}
+		
+		List<PedidoDTO> pedidoDTOList = new ArrayList<PedidoDTO>();
+		
+		for (Pedido ped : pedido) {
+			
+			PedidoDTO pedidoDTO = new PedidoDTO();
+	
+			pedidoDTO.setValorTotal(ped.getValorTotal());
+			pedidoDTO.setPessoa(ped.getPessoa());
+	
+			pedidoDTO.setEntrega(ped.getEnderecoEntrega());
+			pedidoDTO.setCobranca(ped.getEnderecoCobranca());
+	
+			pedidoDTO.setValorDesconto(ped.getValorDesconto());
+			pedidoDTO.setValorFrete(ped.getValorFrete());
+			pedidoDTO.setId(ped.getId());
+
+			for (ItemPedido item : ped.getItemPedidoId()) {
+	
+				ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
+				itemPedidoDTO.setQuantidade(item.getQuantidade());
+				itemPedidoDTO.setProduto(item.getProdutoId());
+	
+				pedidoDTO.getItemPedido().add(itemPedidoDTO);
+			}
+			
+			pedidoDTOList.add(pedidoDTO);
+		
+		}
+
+		return new ResponseEntity<List<PedidoDTO>>(pedidoDTOList, HttpStatus.OK);
 	}	
 }

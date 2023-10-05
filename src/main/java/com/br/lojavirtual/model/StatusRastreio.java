@@ -19,6 +19,8 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "T_STATUS_RASTREIO")
 @SequenceGenerator(name = "seq_status_rastreio", sequenceName = "seq_status_rastreio", allocationSize = 1, initialValue = 1)
@@ -34,10 +36,13 @@ public class StatusRastreio implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 	
+	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "pedido_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
+	@JoinColumn(name = "pedido_id", nullable = false, 
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;
 	
+	@JsonIgnore
 	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_sr_fk"))

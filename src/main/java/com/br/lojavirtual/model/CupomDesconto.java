@@ -50,10 +50,10 @@ public class CupomDesconto implements Serializable {
 	
     private Boolean ativo = Boolean.TRUE;
     
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_cd_fk"))
-	private Pessoa empresaId;	
+	private PessoaJuridica empresaId;	
 
 	public Long getId() {
 		return id;
@@ -111,11 +111,11 @@ public class CupomDesconto implements Serializable {
 		this.percentual_desconto = percentual_desconto;
 	}	
 
-	public Pessoa getEmpresaId() {
+	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
-	public void setEmpresaId(Pessoa empresaId) {
+	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
 	}
 

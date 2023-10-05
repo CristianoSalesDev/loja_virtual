@@ -16,6 +16,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "T_NFE")
 @SequenceGenerator(name = "seq_nfe", sequenceName = "seq_nfe", allocationSize = 1, initialValue = 1)
@@ -27,6 +29,7 @@ public class NFe implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_nfe")	
 	private Long id;
 	
+	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name = "pedido_id", nullable = true, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pedido_fk"))    
     private Pedido pedidoId;

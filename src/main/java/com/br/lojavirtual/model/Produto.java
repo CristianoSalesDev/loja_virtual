@@ -28,6 +28,8 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "T_PRODUTO")
 @SequenceGenerator(name = "seq_produto", sequenceName = "seq_produto", allocationSize = 1, initialValue = 1)
@@ -106,7 +108,8 @@ public class Produto implements Serializable {
 	
     @Column(nullable = false)
 	private Boolean ativo = Boolean.TRUE;
-    
+
+    @JsonIgnore /* Foi colocado esse @JsonIgnore, pois estava dando recursividade em todas os endpoints de consulta de pesquisa envolvendo pedidos e produtos  */
 	@OneToMany(mappedBy = "produtoId", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ImagemProduto> imagens = new ArrayList<ImagemProduto>();	
 
