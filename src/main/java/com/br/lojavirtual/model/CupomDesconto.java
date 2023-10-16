@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,21 +33,23 @@ public class CupomDesconto implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cupom")	
 	private Long id;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
-	private Date data_cadastro = new Date();
+	private Date dataCadastro = new Date();
 	
+	@NotEmpty(message = "Informe a data de Validade do Cupom")
 	@Column(nullable = false)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
-	private Date data_validade;
+	private Date dataValidade;
 	
+	@NotEmpty(message = "Informe o código do Cupom")
 	@Column(nullable = false)
-	private String codigo_cupom;
+	private String codigoCupom;
 	
-	private BigDecimal valor_real_desconto;
+	private BigDecimal valorRealDesconto;
 	
-    private BigDecimal percentual_desconto;
+    private BigDecimal percentualDesconto;
 	
     private Boolean ativo = Boolean.TRUE;
     
@@ -63,14 +66,6 @@ public class CupomDesconto implements Serializable {
 		this.id = id;
 	}
 
-	public Date getData_cadastro() {
-		return data_cadastro;
-	}
-
-	public void setData_cadastro(Date data_cadastro) {
-		this.data_cadastro = data_cadastro;
-	}
-
 	public Boolean getAtivo() {
 		return ativo;
 	}
@@ -79,44 +74,52 @@ public class CupomDesconto implements Serializable {
 		this.ativo = ativo;
 	}
 
-	public Date getData_validade() {
-		return data_validade;
-	}
-
-	public void setData_validade(Date data_validade) {
-		this.data_validade = data_validade;
-	}
-
-	public String getCodigo_cupom() {
-		return codigo_cupom;
-	}
-
-	public void setCodigo_cupom(String codigo_cupom) {
-		this.codigo_cupom = codigo_cupom;
-	}
-
-	public BigDecimal getValor_real_desconto() {
-		return valor_real_desconto;
-	}
-
-	public void setValor_real_desconto(BigDecimal valor_real_desconto) {
-		this.valor_real_desconto = valor_real_desconto;
-	}
-
-	public BigDecimal getPercentual_desconto() {
-		return percentual_desconto;
-	}
-
-	public void setPercentual_desconto(BigDecimal percentual_desconto) {
-		this.percentual_desconto = percentual_desconto;
-	}	
-
 	public PessoaJuridica getEmpresaId() {
 		return empresaId;
 	}
 
 	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
+	}	
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public Date getDataValidade() {
+		return dataValidade;
+	}
+
+	public void setDataValidade(Date dataValidade) {
+		this.dataValidade = dataValidade;
+	}
+
+	public String getCodigoCupom() {
+		return codigoCupom;
+	}
+
+	public void setCodigoCupom(String codigoCupom) {
+		this.codigoCupom = codigoCupom;
+	}
+
+	public BigDecimal getValorRealDesconto() {
+		return valorRealDesconto;
+	}
+
+	public void setValorRealDesconto(BigDecimal valorRealDesconto) {
+		this.valorRealDesconto = valorRealDesconto;
+	}
+
+	public BigDecimal getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
 	}
 
 	@Override

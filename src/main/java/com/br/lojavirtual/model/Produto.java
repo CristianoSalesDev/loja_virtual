@@ -54,9 +54,10 @@ public class Produto implements Serializable {
 	@NotNull(message = "Nome do produto deve ser informado")
 	@Column(nullable = false)
 	private String descricao;
-	
+
+	/* Alterado aqui @ManyToOne(targetEntity = PessoaJuridica.class) para @ManyToOne(targetEntity = Pessoa.class), pois na aula 5.28 estava assim  */
 	@NotNull(message = "Fornecedor deve ser informada")
-	@ManyToOne(targetEntity = PessoaJuridica.class)
+	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "empresa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_prod_fk"))
 	private PessoaJuridica empresaId;
@@ -71,7 +72,7 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "marca_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "marca_id_fk"))
 	private Marca marcaId = new Marca();
 
-	@NotNull(message = "Descrição do produto deve ser informada")	
+	@NotNull(message = "Detalhes do produto deve ser informada")	
 	@Column(columnDefinition = "text", length = 2000, nullable = false)
 	private String detalhes;
 

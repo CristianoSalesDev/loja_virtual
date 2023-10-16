@@ -1,11 +1,12 @@
 package com.br.lojavirtual.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.lojavirtual.ExceptionLojaVirtual;
+import com.br.lojavirtual.enums.StatusContasReceber;
+import com.br.lojavirtual.model.ContasReceber;
 import com.br.lojavirtual.model.Endereco;
 import com.br.lojavirtual.model.ItemPedido;
 import com.br.lojavirtual.model.Pedido;
@@ -28,11 +31,13 @@ import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.StatusRastreio;
 import com.br.lojavirtual.model.dto.ItemPedidoDto;
 import com.br.lojavirtual.model.dto.PedidoDTO;
+import com.br.lojavirtual.repository.ContasReceberRepository;
 import com.br.lojavirtual.repository.EnderecoRepository;
 import com.br.lojavirtual.repository.NfeRepository;
 import com.br.lojavirtual.repository.PedidoRepository;
 import com.br.lojavirtual.repository.StatusRastreioRepository;
 import com.br.lojavirtual.service.PedidoService;
+import com.br.lojavirtual.service.ServiceSendEmail;
 
 @RestController
 public class PedidoController {
@@ -55,9 +60,15 @@ public class PedidoController {
 	@Autowired
 	private PedidoService pedidoService;
 	
+	@Autowired
+ 	private ContasReceberRepository contasReceberRepository;
+	
+	@Autowired
+	private ServiceSendEmail serviceSendEmail;	
+	
 	@ResponseBody
 	@PostMapping(value = "**/salvarPedido")
-	public ResponseEntity<PedidoDTO> salvarPedido(@RequestBody @Valid Pedido pedido) throws ExceptionLojaVirtual {
+	public ResponseEntity<PedidoDTO> salvarPedido(@RequestBody @Valid Pedido pedido) throws ExceptionLojaVirtual, UnsupportedEncodingException, MessagingException {
 		
 		
 		pedido.getPessoa().setEmpresaId(pedido.getEmpresaId());
@@ -119,6 +130,33 @@ public class PedidoController {
 
 			pedidosDTO.getItemPedido().add(itemVendaDTO);
 		}
+		
+		ContasReceber contasReceber = new ContasReceber();
+		contasReceber.setDescricao("Venda da loja virtual nº: " + pedido.getId());
+		contasReceber.setData_pagamento(Calendar.getInstance().getTime());
+		contasReceber.setData_vencimento(Calendar.getInstance().getTime());
+		contasReceber.setEmpresaId(pedido.getEmpresaId());
+		contasReceber.setPessoa(pedido.getPessoa());
+		contasReceber.setStatusContasReceber(StatusContasReceber.LIQUIDADA);
+		contasReceber.setValor_desconto(pedido.getValorDesconto());
+		contasReceber.setValor_total(pedido.getValorTotal());
+		
+		contasReceberRepository.saveAndFlush(contasReceber);
+		
+		/*Email para o comprador*/
+		StringBuilder msgemail = new StringBuilder();
+		msgemail.append("Olá, ").append(pessoaFisica.getNome()).append("</br>");
+		msgemail.append("Você realizou a compra de nº: ").append(pedido.getId()).append("</br>");
+		msgemail.append("Na loja ").append(pedido.getEmpresaId().getNomeFantasia());
+		
+		/*assunto, msg, destino*/
+		serviceSendEmail.enviarEmailHtml("Compra Realizada", msgemail.toString(), pessoaFisica.getEmail());
+		
+		/*Email para o vendedor*/
+		msgemail = new StringBuilder();
+		msgemail.append("Você realizou uma venda, nº " ).append(pedido.getId());
+		serviceSendEmail.enviarEmailHtml("Venda Realizada", msgemail.toString(), pedido.getEmpresaId().getEmail());		
+		
 		
 		return new ResponseEntity<PedidoDTO>(pedidosDTO, HttpStatus.OK);
 	}

@@ -32,7 +32,7 @@ public class Marca implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_marca")	
 	private Long id;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)
 	private Date data_cadastro = new Date();
 

@@ -75,6 +75,7 @@ public class NotaEntrada implements Serializable {
 	@Column(nullable = false)
     private BigDecimal valorTotal;    
 	
+	// Campo também usado para o fornecedor de compra do produto
 	@ManyToOne(targetEntity = PessoaJuridica.class)
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private PessoaJuridica pessoa;
