@@ -11,6 +11,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -29,6 +31,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.br.lojavirtual.enums.StatusPedido;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -117,7 +120,13 @@ public class Pedido implements Serializable {
 	private String observacao;
 	
 	private Boolean excluido = Boolean.FALSE;
+	
+	@NotNull(message = "Status do pedido deve ser informado")
+	@Column(nullable = false)	
+	@Enumerated(EnumType.STRING)
+	private StatusPedido statusPedido;
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -260,6 +269,14 @@ public class Pedido implements Serializable {
 
 	public void setExcluido(Boolean excluido) {
 		this.excluido = excluido;
+	}
+	
+	public StatusPedido getStatusPedido() {
+		return statusPedido;
+	}
+
+	public void setStatusPedido(StatusPedido statusPedido) {
+		this.statusPedido = statusPedido;
 	}
 
 	@Override

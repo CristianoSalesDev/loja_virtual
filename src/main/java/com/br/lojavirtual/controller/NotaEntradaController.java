@@ -20,8 +20,8 @@ import com.br.lojavirtual.ExceptionLojaVirtual;
 import com.br.lojavirtual.model.NotaEntrada;
 import com.br.lojavirtual.model.dto.ObejtoRequisicaoRelatorioProdutosAlertaEstoqueDTO;
 import com.br.lojavirtual.model.dto.ObejtoRequisicaoRelatorioProdutosCompraNotaFiscalDTO;
+import com.br.lojavirtual.model.dto.ObjetoRelatorioStatusCompra;
 import com.br.lojavirtual.repository.NotaEntradaRepository;
-import com.br.lojavirtual.repository.PedidoRepository;
 import com.br.lojavirtual.service.NotaFiscalEntradaService;
 
 @RestController
@@ -32,6 +32,19 @@ public class NotaEntradaController {
 	
     @Autowired
 	private NotaFiscalEntradaService notaFiscalEntradaService;
+    
+    @ResponseBody
+	@PostMapping(value = "**/relatorioStatusCompra")
+	public ResponseEntity<List<ObjetoRelatorioStatusCompra>> relatorioStatusCompra (@Valid 
+			             @RequestBody  ObjetoRelatorioStatusCompra objetoRelatorioStatusCompra){
+		
+		List<ObjetoRelatorioStatusCompra> retorno = new ArrayList<ObjetoRelatorioStatusCompra>();
+		
+		retorno = notaFiscalEntradaService.relatorioStatusVendaLojaVirtual(objetoRelatorioStatusCompra);
+		
+		return new ResponseEntity<List<ObjetoRelatorioStatusCompra>>(retorno, HttpStatus.OK);
+		
+	}    
 	
 	@ResponseBody
 	@PostMapping(value = "**/relatorioProdutosCompradoNotaFiscal")

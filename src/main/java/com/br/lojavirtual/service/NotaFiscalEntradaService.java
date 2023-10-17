@@ -10,12 +10,55 @@ import org.springframework.stereotype.Service;
 
 import com.br.lojavirtual.model.dto.ObejtoRequisicaoRelatorioProdutosAlertaEstoqueDTO;
 import com.br.lojavirtual.model.dto.ObejtoRequisicaoRelatorioProdutosCompraNotaFiscalDTO;
+import com.br.lojavirtual.model.dto.ObjetoRelatorioStatusCompra;
 
 @Service
 public class NotaFiscalEntradaService {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	public List<ObjetoRelatorioStatusCompra> relatorioStatusVendaLojaVirtual(ObjetoRelatorioStatusCompra objetoRelatorioStatusCompra){
+		
+		List<ObjetoRelatorioStatusCompra> retorno = new ArrayList<ObjetoRelatorioStatusCompra>();
+		
+		String sql = "select prod.id as codigoProduto, "
+				+ " prod.descricao as nomeProduto, "
+				+ " pf.email as emailCliente, "
+				+ " pf.telefone as foneCliente, "
+				+ " prod.valor as valor, "
+				+ " pf.id as codigoCliente, "
+				+ " pf.nome as nomeCliente,"
+				+ " prod.qtde_estoque as qtdEstoque, "
+				+ " ped.id as codigoVenda, "
+				+ " ped.status_pedido as statusVenda "
+				+ " from t_pedido as ped "
+				+ " inner join t_item_pedido ip on (ped.id = ip.pedido_id) "
+				+ " inner join t_produto as prod on (prod.id = ip.produto_id) "
+				+ " inner join t_pessoa_fisica as pf on (pf.id = ped.pessoa_id) ";
+		
+		
+				sql+= " where ped.data_venda >= '"+objetoRelatorioStatusCompra.getDataInicial()+"' and ped.data_venda  <= '"+objetoRelatorioStatusCompra.getDataFinal()+"' ";
+				
+				if(!objetoRelatorioStatusCompra.getNomeProduto().isEmpty()) {		
+				  sql += " and upper(prod.descricao) like upper('%"+objetoRelatorioStatusCompra.getNomeProduto()+"%') ";
+				}
+				
+				if (!objetoRelatorioStatusCompra.getStatusVenda().isEmpty()) {
+				 sql+= " and ped.status_pedido in ('"+objetoRelatorioStatusCompra.getStatusVenda()+"') ";
+				}
+				
+				if (!objetoRelatorioStatusCompra.getNomeCliente().isEmpty()) {
+				 sql += " and pf.nome like '%"+objetoRelatorioStatusCompra.getNomeCliente()+"%' ";
+				}
+		
+		
+		retorno = jdbcTemplate.query(sql, new BeanPropertyRowMapper(ObjetoRelatorioStatusCompra.class));
+				
+		return retorno;
+		
+	}
+	
 
 	/**
 	 * Title: Histórico de compras de produtor para a loja.
