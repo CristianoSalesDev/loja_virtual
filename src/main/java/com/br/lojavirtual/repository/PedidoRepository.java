@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,5 +61,13 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 			+ " where i.pedidoId.excluido = false "
 			+ " and i.pedidoId.dataVenda >= ?1 "
 			+ " and i.pedidoId.dataVenda <= ?2 ")
-	List<Pedido> consultaVendaPorData(Date data1, Date data2);	
+	List<Pedido> consultaVendaPorData(Date data1, Date data2);
+	
+	@Modifying(flushAutomatically = true)
+	@Query(nativeQuery = true, value = "update t_pedido set codigo_etiqueta = ?1 where id = ?2")
+	void updateEtiqueta(String idEtiqueta, Long idVenda);
+
+	@Modifying(flushAutomatically = true)
+	@Query(nativeQuery = true, value = "update t_pedido set url_imprime_etiqueta = ?1 where id = ?2")
+	void updateURLEtiqueta(String urlEtiqueta, Long id);	
 }

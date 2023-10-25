@@ -25,7 +25,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.br.lojavirtual.enums.TipoEndereco;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -63,6 +63,21 @@ public abstract class Pessoa implements Serializable {
 	
 	@Column
 	private String tipoPessoa ;
+	
+	public Endereco enderecoEntrega() {
+		
+		Endereco enderecoReturn = null;
+		
+		for (Endereco endereco : enderecos) {
+			if (endereco.getTipoEndereco().name().equals(TipoEndereco.ENTREGA.name())) {
+				enderecoReturn = endereco;
+				break;
+			}
+		}
+		
+		return enderecoReturn;
+	}
+	
 
 	public List<Endereco> getEnderecos() {
 		return enderecos;

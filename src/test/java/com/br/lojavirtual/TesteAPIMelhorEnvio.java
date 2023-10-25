@@ -1,13 +1,6 @@
 package com.br.lojavirtual;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.br.lojavirtual.enums.ApiTokenIntegracao;
-import com.br.lojavirtual.model.dto.EmpresaTransporteDTO;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -73,53 +66,99 @@ public class TesteAPIMelhorEnvio {
 	*/
 		
 		
-		/* Insere as etiquetas do frete */
+		/* Insere as etiquetas do frete 
 		
-		/*  
-		   OkHttpClient client = new OkHttpClient();
+		OkHttpClient client = new OkHttpClient().newBuilder() .build();
+
+		MediaType mediaType = MediaType.parse("application/json");
+		RequestBody body = RequestBody.create(mediaType, "{\"service\":0,\"agency\":49,\"from\":{\"name\":\"string\",\"phone\":\"string\",\"email\":\"string\",\"document\":\"string\",\"company_document\":\"string\",\"state_register\":\"string\",\"address\":\"string\",\"complement\":\"string\",\"number\":\"string\",\"district\":\"string\",\"city\":\"string\",\"country_id\":\"string\",\"postal_code\":\"string\",\"state_abbr\":\"string\",\"note\":\"string\"},\"to\":{\"name\":\"string\",\"phone\":\"string\",\"email\":\"string\",\"document\":\"string\",\"company_document\":\"string\",\"state_register\":\"string\",\"address\":\"string\",\"complement\":\"string\",\"number\":\"string\",\"district\":\"string\",\"city\":\"string\",\"country_id\":\"string\",\"postal_code\":\"string\",\"state_abbr\":\"string\",\"note\":\"string\"},\"products\":[{\"name\":\"string\",\"quantity\":\"string\",\"unitary_value\":\"string\"}],\"volumes\":[{\"height\":0,\"width\":0,\"length\":0,\"weight\":0}],\"options\":{\"insurance_value\":0,\"receipt\":true,\"own_hand\":true,\"reverse\":true,\"non_commercial\":true,\"invoice\":{\"key\":\"string\"},\"plataform\":\"string\",\"tags\":[{\"tag\":\"string\",\"Url\":\"string\"}]}}");
+		Request request = new Request.Builder()
+		  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX + "api/v2/me/cart")
+		  //.post(body)
+		  .method("POST", body)
+		  .addHeader("Accept", "application/json")
+		  .addHeader("Content-Type", "application/json")
+		  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
+		  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
+		  .build();
+
+		Response response = client.newCall(request).execute();
+		
+		System.out.println(response.body().string());
+		
+		*/
+		
+		/*
+		   OkHttpClient client = new OkHttpClient().newBuilder() .build();
 	
 			MediaType mediaType = MediaType.parse("application/json");
 			RequestBody body = RequestBody.create(mediaType, "{\"options\":{\"receipt\":true,\"own_hand\":true,\"reverse\":true,\"non_commercial\":true}}");
 			Request request = new Request.Builder()
-			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX +"https://sandbox.melhorenvio.com.br/api/v2/me/cart")
+			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX + "api/v2/me/cart")
 			  .method("POST", body)
 			  .addHeader("Accept", "application/json")
 			  .addHeader("Content-Type", "application/json")
-			  .addHeader("Authorization", "Bearer + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX")
+			  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
 			  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
 			  .build();
 			
 			Response response = client.newCall(request).execute();
-	    */
+			
+		    System.out.println(response.body().string());
+        */
 		
 		/* Faz a compra do frete para as etiquetas */
 		
-		/*		
-			OkHttpClient client = new OkHttpClient();
-	
-			Request request = new Request.Builder()
-			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX +"https://sandbox.melhorenvio.com.br/api/v2/me/shipment/checkout")
+		 /*
+			OkHttpClient client = new OkHttpClient().newBuilder() .build();
+				
+			  MediaType mediaType = MediaType.parse("application/json");
+			  RequestBody body = RequestBody.create(mediaType, "{ \"from\": { \"postal_code\": \"96020360\" }, \"to\": { \"postal_code\": \"01018020\" }, \"products\": [ { \"id\": \"x\", \"width\": 11, \"height\": 17, \"length\": 11, \"weight\": 0.3, \"insurance_value\": 10.1, \"quantity\": 1 }, { \"id\": \"y\", \"width\": 16, \"height\": 25, \"length\": 11, \"weight\": 0.3, \"insurance_value\": 55.05, \"quantity\": 2 }, { \"id\": \"z\", \"width\": 22, \"height\": 30, \"length\": 11, \"weight\": 1, \"insurance_value\": 30, \"quantity\": 1 } ] }");			
+			  Request request = new Request.Builder()
+			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX + "api/v2/me/shipment/checkout")
 			  .method("POST", body)
+			  //.post(null)
 			  .addHeader("Accept", "application/json")
 			  .addHeader("Content-Type", "application/json")
-			  .addHeader("Authorization", "Bearer + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX")
+			  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
 			  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
 			  .build();
 			
-			Response response = client.newCall(request).execute();		
-		*/
+			Response response = client.newCall(request).execute();
+			
+			System.out.println(response.body().string());
+	    */
 		
-	    /* Gera as etiquetas e imprime */
+	    /* Gera as etiquetas e imprime 	*/ 
+		
+		OkHttpClient client = new OkHttpClient().newBuilder() .build();
+
+		MediaType mediaType = MediaType.parse("application/json");
+		RequestBody body = RequestBody.create(mediaType, "{\"mode\":\"\",\"orders\":[\"{{order_id}}\"]}");
+		Request request = new Request.Builder()
+		  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX + "api/v2/me/shipment/print")
+		  //.method("POST", body)
+		  .post(body)
+		  .addHeader("Accept", "application/json")
+		  .addHeader("Content-Type", "application/json")
+		  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
+		  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
+		  .build();
+
+		Response response = client.newCall(request).execute();
+		
+		System.out.println(response.body().string());
+	
 		
 		/*
-			OkHttpClient client = new OkHttpClient();
+			OkHttpClient client = new OkHttpClient().newBuilder() .build();
 	
 			Request request = new Request.Builder()
-			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX +"https://sandbox.melhorenvio.com.br/api/v2/me/shipment/generate")
+			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX + "api/v2/me/shipment/generate")
 			  .method("POST", body)
 			  .addHeader("Accept", "application/json")
 			  .addHeader("Content-Type", "application/json")
-			  .addHeader("Authorization", "Bearer + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX")
+			  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
 			  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
 			  .build();
 	
