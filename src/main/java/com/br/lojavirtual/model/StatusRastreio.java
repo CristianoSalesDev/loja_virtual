@@ -48,14 +48,8 @@ public class StatusRastreio implements Serializable {
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_sr_fk"))
 	private PessoaJuridica empresaId;	
 	
-	private String centroDistribuicao;
+	private String urlRastreio;
 	
-	private String status;
-	
-	private String cidade;
-	
-	private String estado;
-
 	public Long getId() {
 		return id;
 	}
@@ -72,38 +66,6 @@ public class StatusRastreio implements Serializable {
 		this.data_cadastro = data_cadastro;
 	}
 
-	public String getCentroDistribuicao() {
-		return centroDistribuicao;
-	}
-
-	public void setCentroDistribuicao(String centroDistribuicao) {
-		this.centroDistribuicao = centroDistribuicao;
-	}
-
-	public String getEstado() {
-		return estado;
-	}
-
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getCidade() {
-		return cidade;
-	}
-
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
-	}	
-
 	public Pedido getPedidoId() {
 		return pedidoId;
 	}
@@ -118,6 +80,14 @@ public class StatusRastreio implements Serializable {
 
 	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
+	}	
+
+	public String getUrlRastreio() {
+		return urlRastreio;
+	}
+
+	public void setUrlRastreio(String urlRastreio) {
+		this.urlRastreio = urlRastreio;
 	}
 
 	@Override

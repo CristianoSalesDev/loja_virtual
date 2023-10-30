@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
 @RestController
 public class PedidoController {
@@ -79,7 +81,10 @@ public class PedidoController {
  	private ContasReceberRepository contasReceberRepository;
 	
 	@Autowired
-	private ServiceSendEmail serviceSendEmail;	
+	private ServiceSendEmail serviceSendEmail;
+	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	
 	@ResponseBody
 	@PostMapping(value = "**/salvarPedido")
@@ -110,6 +115,7 @@ public class PedidoController {
 		/*Salva primeiro a venda e todo os dados*/
 		pedido = pedidoRepository.saveAndFlush(pedido);
 		
+        /* Feito só para testar para usar no Postman, pois ainda não tinha o Front-End
 		StatusRastreio statusRastreio = new StatusRastreio();
 		statusRastreio.setCentroDistribuicao("Loja Local");
 		statusRastreio.setCidade("Fortaleza");
@@ -119,6 +125,7 @@ public class PedidoController {
 		statusRastreio.setPedidoId(pedido);
 		
 		statusRastreioRepository.save(statusRastreio);
+		*/
 		
 		/*Associa a venda gravada no banco com a nota fiscal */
 		pedido.getNfeId().setPedidoId(pedido);
@@ -433,6 +440,31 @@ public class PedidoController {
 	}
 	
 	@ResponseBody
+	@GetMapping(value = "**/cancelaEtiqueta/{idEtiqueta}/{}/{descricao}")
+	public ResponseEntity<String> cancelaEtiqueta(@PathVariable String idEtiqueta, @PathVariable String reason_id, @PathVariable String descricao) throws IOException {
+		
+		
+		OkHttpClient client = new OkHttpClient().newBuilder().build();
+
+		okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/json");
+		okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, "{\"order\":{\"id\":\""+idEtiqueta+"\",\"reason_id\":\""+reason_id+"\",\"description\":\""+descricao+"\"}}");
+		okhttp3.Request request = new Request.Builder()
+		  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX+ "api/v2/me/shipment/cancel")
+		  //.post(body)
+		  .method("POST", body)
+		  .addHeader("Accept", "application/json")
+		  .addHeader("Content-Type", "application/json")
+		  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
+		  .addHeader("User-Agent", "comprefacilnahora@gmail.com")
+		  .build();
+
+		okhttp3.Response response = client.newCall(request).execute();
+
+		return new ResponseEntity<String>(response.body().string(), HttpStatus.OK);
+	}
+	
+	
+	@ResponseBody
 	@GetMapping(value = "**/imprimeCompraEtiquetaFrete/{idVenda}")
 	public ResponseEntity<String> imprimeCompraEtiquetaFrete(@PathVariable Long idVenda) throws ExceptionLojaVirtual, IOException {
 		
@@ -457,9 +489,9 @@ public class PedidoController {
 		envioEtiquetaDTO.getFrom().setAddress(pedido.getEmpresaId().getEnderecos().get(0).getLogradouro());
 		envioEtiquetaDTO.getFrom().setComplement(pedido.getEmpresaId().getEnderecos().get(0).getComplemento());
 		envioEtiquetaDTO.getFrom().setNumber(pedido.getEmpresaId().getEnderecos().get(0).getNumero());
-		envioEtiquetaDTO.getFrom().setDistrict(pedido.getEmpresaId().getEnderecos().get(0).getEstado());
+		envioEtiquetaDTO.getFrom().setDistrict(pedido.getEmpresaId().getEnderecos().get(0).getUf());
 		envioEtiquetaDTO.getFrom().setCity(pedido.getEmpresaId().getEnderecos().get(0).getCidade());
-		envioEtiquetaDTO.getFrom().setCountry_id(pedido.getEmpresaId().getEnderecos().get(0).getUf());
+		envioEtiquetaDTO.getFrom().setCountry_id(pedido.getEmpresaId().getEnderecos().get(0).getEstado());
 		envioEtiquetaDTO.getFrom().setPostal_code(pedido.getEmpresaId().getEnderecos().get(0).getCep());
 		envioEtiquetaDTO.getFrom().setNote("Não há");
 
@@ -471,10 +503,10 @@ public class PedidoController {
 		envioEtiquetaDTO.getTo().setAddress(pedido.getPessoa().enderecoEntrega().getLogradouro());
 		envioEtiquetaDTO.getTo().setComplement(pedido.getPessoa().enderecoEntrega().getComplemento());
 		envioEtiquetaDTO.getTo().setNumber(pedido.getPessoa().enderecoEntrega().getNumero());
-		envioEtiquetaDTO.getTo().setDistrict(pedido.getPessoa().enderecoEntrega().getEstado());
+		envioEtiquetaDTO.getTo().setDistrict(pedido.getPessoa().enderecoEntrega().getUf());
 		envioEtiquetaDTO.getTo().setCity(pedido.getPessoa().enderecoEntrega().getCidade());
-		envioEtiquetaDTO.getTo().setState_abbr(pedido.getPessoa().enderecoEntrega().getEstado());
-		envioEtiquetaDTO.getTo().setCountry_id(pedido.getPessoa().enderecoEntrega().getUf());
+		envioEtiquetaDTO.getTo().setState_abbr(pedido.getPessoa().enderecoEntrega().getUf());
+		envioEtiquetaDTO.getTo().setCountry_id(pedido.getPessoa().enderecoEntrega().getEstado());
 		envioEtiquetaDTO.getTo().setPostal_code(pedido.getPessoa().enderecoEntrega().getCep());
 		envioEtiquetaDTO.getTo().setNote("Não há");
 		
@@ -491,11 +523,9 @@ public class PedidoController {
 			
 			products.add(dto);
 		}
-		
-		
+				
 		envioEtiquetaDTO.setProducts(products);
-		
-		
+				
 		List<VolumesEnvioEtiquetaDTO> volumes = new ArrayList<VolumesEnvioEtiquetaDTO>();
 		
 		for (ItemPedido itemPedido : pedido.getItemPedidoId()) {
@@ -509,8 +539,7 @@ public class PedidoController {
 			
 			volumes.add(dto);
 		}
-		
-		
+				
 		envioEtiquetaDTO.setVolumes(volumes);
 		
 		envioEtiquetaDTO.getOptions().setInsurance_value("" + pedido.getValorTotal().doubleValue());
@@ -541,8 +570,14 @@ public class PedidoController {
 			  .build();
 			
 			okhttp3.Response response = client.newCall(request).execute();
+			
+			String respostaJson = response.body().string();
+			
+			if (respostaJson.contains("error")) {
+			   throw new ExceptionLojaVirtual(respostaJson);	
+			}
 		
-			JsonNode jsonNode = new ObjectMapper().readTree(response.body().string());
+			JsonNode jsonNode = new ObjectMapper().readTree(respostaJson);
 			
 			Iterator<JsonNode> iterator = jsonNode.iterator();
 			
@@ -550,13 +585,19 @@ public class PedidoController {
 			
 			while(iterator.hasNext()) {
 				JsonNode node = iterator.next();
-				idEtiqueta = node.get("id").asText();
+			    if (node.get("id") != null) { 
+				   idEtiqueta = node.get("id").asText();
+			    }else {
+			    	idEtiqueta = node.asText();
+			    }
 				break;
 			}
 			
 	    /*Salvando o código da etiqueta*/
-	    pedidoRepository.updateEtiqueta(idEtiqueta, pedido.getId());
+	    jdbcTemplate.execute("begin; update t_pedido set codigo_etiqueta = '"+idEtiqueta+"' where id = "+pedido.getId()+" ;commit;");	
+	    //pedidoRepository.updateEtiqueta(idEtiqueta, pedido.getId());
 	    
+	    /* Faz a compra do frete para a etiqueta */
 		OkHttpClient clientCompra = new OkHttpClient().newBuilder().build();
 		 okhttp3.MediaType mediaTypeC =  okhttp3.MediaType.parse("application/json");
 		 okhttp3.RequestBody bodyC =  okhttp3.RequestBody.create(mediaTypeC, "{\n    \"orders\": [\n        \""+idEtiqueta+"\"\n    ]\n}");
@@ -574,7 +615,9 @@ public class PedidoController {
 		 if (!responseC.isSuccessful()) {
 			 return new ResponseEntity<String>("Não foi possível realizar a compra da etiqueta", HttpStatus.OK); 
 		 }
+		
 		 
+		 /* Gera as etiquetas */ 
 		OkHttpClient clientGe = new OkHttpClient().newBuilder().build();
 		 okhttp3.MediaType mediaTypeGe =  okhttp3.MediaType.parse("application/json");
 		 okhttp3.RequestBody bodyGe =  okhttp3.RequestBody.create(mediaTypeGe, "{\n    \"orders\":[\n        \""+idEtiqueta+"\"\n    ]\n}");
@@ -612,12 +655,57 @@ public class PedidoController {
 					
 					
 			if (!responseIm.isSuccessful()) {
-				 return new ResponseEntity<String>("Não foi imprimir a etiqueta.", HttpStatus.OK); 
+				 return new ResponseEntity<String>("Não foi possível imprimir a etiqueta.", HttpStatus.OK); 
 			}		
 					
 		 String urlEtiqueta = responseIm.body().string();
 			
-		 pedidoRepository.updateURLEtiqueta(urlEtiqueta, pedido.getId());
+		 jdbcTemplate.execute("begin; update t_pedido set url_imprime_etiqueta = '"+urlEtiqueta+"' where id = "+pedido.getId()+" ;commit;");
+		 //pedidoRepository.updateURLEtiqueta(urlEtiqueta, pedido.getId());
+		 
+		    OkHttpClient clientRastreio = new OkHttpClient().newBuilder().build();
+			okhttp3.MediaType mediaTypeR = okhttp3.MediaType.parse("application/json");
+			okhttp3.RequestBody bodyR = okhttp3.RequestBody.create(mediaTypeR, "{\"orders\":[\"9a7d0173-79f2-47d0-829e-bbe8a48aad78\"]}");
+			okhttp3.Request requestR = new Request.Builder()
+			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX+ "api/v2/me/shipment/tracking")
+			  .post(body)
+			  .addHeader("Accept", "application/json")
+			  .addHeader("Content-type", "application/json")
+			  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
+			  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
+			  .build();
+
+			Response responseR = clientRastreio.newCall(requestR).execute();			
+			
+			JsonNode jsonNodeR = new ObjectMapper().readTree(responseR.body().string());
+						
+			Iterator<JsonNode> iteratorR = jsonNodeR.iterator();
+			
+			String idEtiquetaR = "";
+			
+			while(iteratorR.hasNext()) {
+				JsonNode node = iteratorR.next();
+				 if (node.get("tracking") != null) {
+				     idEtiquetaR = node.get("tracking").asText();
+				 }else {
+					 idEtiquetaR = node.asText(); 
+				 }
+				break;
+			}
+			
+			List<StatusRastreio> rastreios = statusRastreioRepository.listaRastreioVenda(idVenda);
+			 
+			 if (rastreios.isEmpty()) {
+				 
+				 StatusRastreio rastreio = new StatusRastreio();
+				 rastreio.setEmpresaId(pedido.getEmpresaId());
+				 rastreio.setPedidoId(pedido);
+				 rastreio.setUrlRastreio("https://www.melhorrastreio.com.br/rastreio/" + idEtiquetaR);
+				 
+				 statusRastreioRepository.saveAndFlush(rastreio);
+			 }else {
+				 statusRastreioRepository.salvaUrlRastreio("https://www.melhorrastreio.com.br/rastreio/" + idEtiquetaR, idVenda);
+			 }
 		
  		 return new ResponseEntity<String>("Sucesso", HttpStatus.OK);
 		

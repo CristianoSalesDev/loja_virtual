@@ -11,7 +11,58 @@ import okhttp3.Response;
 public class TesteAPIMelhorEnvio {
 
 	public static void main(String[] args) throws Exception {
+	
+		OkHttpClient client = new OkHttpClient();
+
+		MediaType mediaType = MediaType.parse("application/json");
+		RequestBody body = RequestBody.create(mediaType, "{\"orders\":[\"9a7d0173-79f2-47d0-829e-bbe8a48aad78\"]}");
+		Request request = new Request.Builder()
+		  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX+ "api/v2/me/shipment/tracking")
+		  .post(body)
+		  .addHeader("Accept", "application/json")
+		  .addHeader("Content-type", "application/json")
+		  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
+		  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
+		  .build();
+
+		Response response = client.newCall(request).execute();
 		
+		System.out.println(response.body().string());
+		
+		/* Lista todas as agencias cadastradas no Melhor Envio
+		  
+		OkHttpClient client = new OkHttpClient();
+
+		Request request = new Request.Builder()
+		  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX+ "api/v2/me/shipment/agencies")
+		  .get()
+		  .addHeader("accept", "application/json")
+		  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
+		  .build();
+
+		Response response = client.newCall(request).execute();		
+		
+		System.out.println(response.body().string());
+		
+       */		
+	/*	
+		OkHttpClient client = new OkHttpClient().newBuilder()
+				  .build();
+				MediaType mediaType = MediaType.parse("application/json");
+				RequestBody body = RequestBody.create(mediaType, "{\n    \"orders\": [\n        \"a54d16ed-1a73-4625-b73f-fb24833b9fb6\"\n    ]\n}");
+				Request request = new Request.Builder()
+				  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX+ "api/v2/me/shipment/tracking")
+				  .method("POST", body)
+				  .addHeader("Accept", "application/json")
+				  .addHeader("Content-Type", "application/json")
+				  .addHeader("Authorization", "Bearer " +  ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
+				  .addHeader("User-Agent", "suporte@jdevtreinamento.com.br")
+				  .build();
+				
+				Response response = client.newCall(request).execute();
+		
+				System.out.println(response.body().string());		
+	*/	
 	/*
 		OkHttpClient client = new OkHttpClient().newBuilder() .build();
 			MediaType mediaType = MediaType.parse("application/json");
@@ -129,7 +180,7 @@ public class TesteAPIMelhorEnvio {
 			System.out.println(response.body().string());
 	    */
 		
-	    /* Gera as etiquetas e imprime 	*/ 
+	    /* Gera as etiquetas e imprime 	 
 		
 		OkHttpClient client = new OkHttpClient().newBuilder() .build();
 
@@ -148,7 +199,8 @@ public class TesteAPIMelhorEnvio {
 		Response response = client.newCall(request).execute();
 		
 		System.out.println(response.body().string());
-	
+     
+		*/ 
 		
 		/*
 			OkHttpClient client = new OkHttpClient().newBuilder() .build();

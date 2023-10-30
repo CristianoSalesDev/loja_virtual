@@ -126,13 +126,15 @@ public class Pedido implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private StatusPedido statusPedido;
 
+	@Column(name = "codigo_etiqueta")
     private String codigoEtiqueta;
     
+	@Column(name = "url_imprime_etiqueta")
     private String urlImprimeEtiqueta;
     
     /* Frete/transportadora escolhida */
-    private String servicoTransportadora;    
-	
+    private String servicoTransportadora;
+    
 	public String getServicoTransportadora() {
 		return servicoTransportadora;
 	}
