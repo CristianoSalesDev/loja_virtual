@@ -37,6 +37,7 @@ import com.br.lojavirtual.model.dto.ConsultaFreteDTO;
 import com.br.lojavirtual.model.dto.EmpresaTransporteDTO;
 import com.br.lojavirtual.model.dto.EnvioEtiquetaDTO;
 import com.br.lojavirtual.model.dto.ItemPedidoDto;
+import com.br.lojavirtual.model.dto.ObjetoPostBoletoJuno;
 import com.br.lojavirtual.model.dto.PedidoDTO;
 import com.br.lojavirtual.model.dto.ProductsEnvioEtiquetaDTO;
 import com.br.lojavirtual.model.dto.TagsEnvioDto;
@@ -47,6 +48,7 @@ import com.br.lojavirtual.repository.NfeRepository;
 import com.br.lojavirtual.repository.PedidoRepository;
 import com.br.lojavirtual.repository.StatusRastreioRepository;
 import com.br.lojavirtual.service.PedidoService;
+import com.br.lojavirtual.service.ServiceJunoBoleto;
 import com.br.lojavirtual.service.ServiceSendEmail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,6 +87,9 @@ public class PedidoController {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private ServiceJunoBoleto serviceJunoBoleto;
 	
 	@ResponseBody
 	@PostMapping(value = "**/salvarPedido")
@@ -665,17 +670,18 @@ public class PedidoController {
 		 
 		    OkHttpClient clientRastreio = new OkHttpClient().newBuilder().build();
 			okhttp3.MediaType mediaTypeR = okhttp3.MediaType.parse("application/json");
-			okhttp3.RequestBody bodyR = okhttp3.RequestBody.create(mediaTypeR, "{\"orders\":[\"9a7d0173-79f2-47d0-829e-bbe8a48aad78\"]}");
+			okhttp3.RequestBody bodyR = okhttp3.RequestBody.create(mediaTypeR, "{\"orders\":[\""+idEtiqueta+"\"]}");
 			okhttp3.Request requestR = new Request.Builder()
 			  .url(ApiTokenIntegracao.URL_MELHOR_ENVIO_SANDBOX+ "api/v2/me/shipment/tracking")
-			  .post(body)
+			  .method("POST", bodyR)
+			  //.post(body)
 			  .addHeader("Accept", "application/json")
 			  .addHeader("Content-type", "application/json")
 			  .addHeader("Authorization", "Bearer " + ApiTokenIntegracao.TOKEN_MELHOR_ENVIO_SANDBOX)
 			  .addHeader("User-Agent", "cristianoaragaosales@gmail.com")
 			  .build();
 
-			Response responseR = clientRastreio.newCall(requestR).execute();			
+			Response responseR = clientRastreio.newCall(requestR).execute();
 			
 			JsonNode jsonNodeR = new ObjectMapper().readTree(responseR.body().string());
 						
@@ -709,6 +715,18 @@ public class PedidoController {
 		
  		 return new ResponseEntity<String>("Sucesso", HttpStatus.OK);
 		
+	}
+	
+	@ResponseBody
+	@PostMapping(value = "**/gerarBoletoPix")
+	public ResponseEntity<String> gerarBoletoPix(@RequestBody @Valid ObjetoPostBoletoJuno objetoPostBoletoJuno) throws Exception{
+		return  new ResponseEntity<String>(serviceJunoBoleto.gerarBoletoApi(objetoPostBoletoJuno), HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@PostMapping(value = "**/cancelarBoletoPix")
+	public ResponseEntity<String> gerarBoletoPix(@RequestBody @Valid String code) throws Exception{
+		return  new ResponseEntity<String>(serviceJunoBoleto.cancelarBoleto(code), HttpStatus.OK);
 	}	
 	
 	@ResponseBody

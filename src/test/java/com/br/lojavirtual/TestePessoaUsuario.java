@@ -10,7 +10,9 @@ import com.br.lojavirtual.enums.TipoEndereco;
 import com.br.lojavirtual.model.Endereco;
 import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.PessoaJuridica;
+import com.br.lojavirtual.model.dto.ObjetoPostBoletoJuno;
 import com.br.lojavirtual.repository.PessoaRepository;
+import com.br.lojavirtual.service.ServiceJunoBoleto;
 
 import junit.framework.TestCase;
 
@@ -23,6 +25,36 @@ public class TestePessoaUsuario extends TestCase {
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private ServiceJunoBoleto serviceJunoBoleto;
+	
+	@Test
+	public void testeToken() throws Exception {
+		serviceJunoBoleto.obterTokenApiJuno();
+	}
+	
+	@Test
+	public void testeToken2() throws Exception {
+	  String valor = serviceJunoBoleto.geraChaveBoletoPix();
+	  System.out.println(valor);
+	}	
+	
+	@Test
+	public void testeToken3() throws Exception {
+      ObjetoPostBoletoJuno objetoPostCarneJuno = new ObjetoPostBoletoJuno();
+ 	 objetoPostCarneJuno.setDescription("Teste de geração de boleto e pix");
+ 	 objetoPostCarneJuno.setEmail("cristianoaragaosales@gmail.com");
+ 	 objetoPostCarneJuno.setIdPedido(21L);
+ 	 objetoPostCarneJuno.setInstallments("6");
+ 	 objetoPostCarneJuno.setPayerCpfCnpj("05916564937");
+ 	 objetoPostCarneJuno.setPayerName("Alex fernando");
+ 	 objetoPostCarneJuno.setPayerPhone("45999795800");
+ 	 objetoPostCarneJuno.setReference("Venda de venda de loja virtual cod: 21");
+ 	 objetoPostCarneJuno.setTotalAmount("50.00");      
+	  String valor = serviceJunoBoleto.gerarBoletoApi(objetoPostCarneJuno);
+	  System.out.println(valor);
+	}	
 	
 	@Test
 	public void testCadPessoaJuridica() throws ExceptionLojaVirtual {
