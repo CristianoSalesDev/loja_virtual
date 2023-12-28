@@ -30,7 +30,7 @@ public class AcessoController {
 	private AcessoRepository acessoRepository;
 	
 	@ResponseBody /* Poder dar um retorno da API */
-	@PostMapping(value = "/salvarAcesso") /* Mapeando a URL para receber o JSON */
+	@PostMapping(value = "**/salvarAcesso") /* Mapeando a URL para receber o JSON */
 	public ResponseEntity<Acesso> salvarAcesso(@RequestBody Acesso acesso) throws ExceptionLojaVirtual { /* Recebe o JSON e convert pra objeto */
 	
 		if (acesso.getId() == null) {
