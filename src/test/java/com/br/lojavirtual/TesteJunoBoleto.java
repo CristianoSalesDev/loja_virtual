@@ -18,10 +18,26 @@ public class TesteJunoBoleto extends TestCase {
 	private ServiceJunoBoleto serviceJunoBoleto;
 	
 	@Test
+	public void listaWebHook() throws Exception {
+		
+		String retorno = serviceJunoBoleto.listaWebHook();
+		
+		System.out.print(retorno);
+	}
+	
+	@Test
+	public void deleteWebHook() throws Exception {
+		
+		serviceJunoBoleto.deleteWebHook("wbh_E71095B5BF65E8D2DB018EE8A89BACB8");
+		
+	}
+	
+	
+	@Test
 	public void testeCriarWebHook() throws Exception {
 		
 		CriarWebHook criarWebHook = new CriarWebHook();
-		criarWebHook.setUrl("https://lojavirtual-env.eba-emeh4pnx.sa-east-1.elasticbeanstalk.com/lojavirtual/requisicaojunoboleto/notificacaoapiv2");
+		criarWebHook.setUrl("https://api.comprefacilnahora.com.br/lojavirtual/requisicaojunoboleto/notificacaoapiv2");
 		criarWebHook.getEventTypes().add("PAYMENT_NOTIFICATION");
 		criarWebHook.getEventTypes().add("BILL_PAYMENT_STATUS_CHANGED");
 		
