@@ -50,6 +50,7 @@ import com.br.lojavirtual.repository.StatusRastreioRepository;
 import com.br.lojavirtual.service.PedidoService;
 import com.br.lojavirtual.service.ServiceJunoBoleto;
 import com.br.lojavirtual.service.ServiceSendEmail;
+import com.br.lojavirtual.service.VendaService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -90,6 +91,9 @@ public class PedidoController {
 	
 	@Autowired
 	private ServiceJunoBoleto serviceJunoBoleto;
+	
+	@Autowired
+	private VendaService vendaService; 
 	
 	@ResponseBody
 	@PostMapping(value = "**/salvarPedido")
@@ -198,6 +202,8 @@ public class PedidoController {
 			pedido = new Pedido();	
 		}
 
+		PedidoDTO pedidoDTO = vendaService.consultaVenda(pedido);
+		/*
 		PedidoDTO pedidoDTO = new PedidoDTO();
 
 		pedidoDTO.setValorTotal(pedido.getValorTotal());
@@ -218,7 +224,8 @@ public class PedidoController {
 
 			pedidoDTO.getItemPedido().add(itemVendaDTO);
 		}
-
+       */
+		
 		return new ResponseEntity<PedidoDTO>(pedidoDTO, HttpStatus.OK);
 	}
 

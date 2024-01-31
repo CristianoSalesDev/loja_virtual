@@ -11,9 +11,9 @@ public class PedidoDTO {
 
 	private Long id;
 
-	private BigDecimal valorTotal;
+	private BigDecimal valorTotal = BigDecimal.ZERO;
 
-	private BigDecimal valorDesconto;
+	private BigDecimal valorDesconto = BigDecimal.ZERO;
 
 	private Pessoa pessoa;
 
@@ -21,7 +21,7 @@ public class PedidoDTO {
 
 	private Endereco entrega;
 
-	private BigDecimal valorFrete;
+	private BigDecimal valorFrete = BigDecimal.ZERO;
 
 	private List<ItemPedidoDto> itemPedido = new ArrayList<ItemPedidoDto>();
 
@@ -50,6 +50,11 @@ public class PedidoDTO {
 	}
 
 	public BigDecimal getValorDesconto() {
+		
+		if (valorDesconto == null) {
+			return BigDecimal.ZERO;
+		}
+		
 		return valorDesconto;
 	}
 
