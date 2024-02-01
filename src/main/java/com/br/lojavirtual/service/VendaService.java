@@ -89,7 +89,7 @@ public class VendaService {
 
 			ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
 			itemPedidoDTO.setQuantidade(item.getQuantidade());
-			itemPedidoDTO.setProduto(item.getProdutoId());
+			itemPedidoDTO.setProdutoId(item.getProdutoId());
 
 			pedidoDTO.getItemPedido().add(itemPedidoDTO);
 		}

@@ -157,7 +157,7 @@ public class PedidoController {
 
 			ItemPedidoDto itemVendaDTO = new ItemPedidoDto();
 			itemVendaDTO.setQuantidade(item.getQuantidade());
-			itemVendaDTO.setProduto(item.getProdutoId());
+			itemVendaDTO.setProdutoId(item.getProdutoId());
 
 			pedidosDTO.getItemPedido().add(itemVendaDTO);
 		}
@@ -294,7 +294,7 @@ public class PedidoController {
 	
 				ItemPedidoDto itemPedidoDtO = new ItemPedidoDto();
 				itemPedidoDtO.setQuantidade(item.getQuantidade());
-				itemPedidoDtO.setProduto(item.getProdutoId());
+				itemPedidoDtO.setProdutoId(item.getProdutoId());
 	
 				pedidoDTO.getItemPedido().add(itemPedidoDtO);
 			}
@@ -355,7 +355,7 @@ public class PedidoController {
 	
 				ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
 				itemPedidoDTO.setQuantidade(item.getQuantidade());
-				itemPedidoDTO.setProduto(item.getProdutoId());
+				itemPedidoDTO.setProdutoId(item.getProdutoId());
 	
 				pedidoDTO.getItemPedido().add(itemPedidoDTO);
 			}
@@ -397,7 +397,7 @@ public class PedidoController {
 	
 				ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
 				itemPedidoDTO.setQuantidade(item.getQuantidade());
-				itemPedidoDTO.setProduto(item.getProdutoId());
+				itemPedidoDTO.setProdutoId(item.getProdutoId());
 	
 				pedidoDTO.getItemPedido().add(itemPedidoDTO);
 			}
@@ -439,7 +439,7 @@ public class PedidoController {
 	
 				ItemPedidoDto itemPedidoDTO = new ItemPedidoDto();
 				itemPedidoDTO.setQuantidade(item.getQuantidade());
-				itemPedidoDTO.setProduto(item.getProdutoId());
+				itemPedidoDTO.setProdutoId(item.getProdutoId());
 	
 				pedidoDTO.getItemPedido().add(itemPedidoDTO);
 			}

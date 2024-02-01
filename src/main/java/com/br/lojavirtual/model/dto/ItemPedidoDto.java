@@ -16,13 +16,12 @@ public class ItemPedidoDto {
 		this.quantidade = quantidade;
 	}
 
-	public Produto getProduto() {
+	public Produto getProdutoId() {
 		return produtoId;
 	}
 
-	public void setProduto(Produto produto) {
-		this.produtoId = produto;
+	public void setProdutoId(Produto produtoId) {
+		this.produtoId = produtoId;
 	}
 
-	
 }
