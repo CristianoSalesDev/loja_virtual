@@ -406,13 +406,23 @@
 					   cep: cep,
 					   rua: rua,
 					   numero: numero,
-					   estado: estado
+					   estado: estado,
+					   cidade: cidade
 				   }
 			   }).success(function (response) {
 				 
-				   document.getElementById('buttonrealizarPagamento').disabled = true;
-				   document.getElementById('buttonrealizarPagamento').value = 'Sucesso, OK... Pago';   
-				   
+				   if (response == 'sucesso' ) {
+					   
+				      document.getElementById('buttonrealizarPagamento').disabled = true;
+				      document.getElementById('buttonrealizarPagamento').value = 'Sucesso, OK... Pago';
+				      
+				   }else {
+					   
+					   document.getElementById('buttonrealizarPagamento').disabled = false;
+					   document.getElementById('buttonrealizarPagamento').value = 'Realizar Pagamento';
+					   
+					   alert(response);
+				   }
 			   }).fail(function (xhr, status, errorThrown) {
 				   
 				   document.getElementById('buttonrealizarPagamento').disabled = false;

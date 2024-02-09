@@ -69,5 +69,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
 	@Modifying(flushAutomatically = true)
 	@Query(nativeQuery = true, value = "update t_pedido set url_imprime_etiqueta = ?1 where id = ?2")
-	void updateURLEtiqueta(String urlEtiqueta, Long id);	
+	void updateURLEtiqueta(String urlEtiqueta, Long id);
+	
+	@Modifying(flushAutomatically = true)
+	@Query(nativeQuery = true, value = "update t_pedido set status_pedido = 'FINALIZADA' where id = ?1")
+	void updateFinalizaVenda(Long id);	
 }
