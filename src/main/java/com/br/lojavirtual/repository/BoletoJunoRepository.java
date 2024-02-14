@@ -1,5 +1,7 @@
 package com.br.lojavirtual.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +12,9 @@ import com.br.lojavirtual.model.BoletoJuno;
 
 @Repository
 public interface BoletoJunoRepository extends JpaRepository<BoletoJuno, Long> {
+
+	@Query("select b from BoletoJuno b where b.pedidoId.id = ?1 and b.quitado = false")
+	public List<BoletoJuno> cobrancaDaVendaCompra(Long idVendaCompra);
 	
 	@Query("select b from BoletoJuno b where b.code = ?1")
 	public BoletoJuno findByCode (String code);

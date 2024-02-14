@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,19 @@ import com.br.lojavirtual.model.AccessTokenJunoAPI;
 import com.br.lojavirtual.model.BoletoJuno;
 import com.br.lojavirtual.model.PaymentsCartaoCredito;
 import com.br.lojavirtual.model.Pedido;
+import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.RetornoPagamentoCartaoJuno;
+import com.br.lojavirtual.model.dto.AsaasApiPagamentoStatus;
 import com.br.lojavirtual.model.dto.BoletoGeradoApiJuno;
+import com.br.lojavirtual.model.dto.CartaoCreditoApiAsaas;
+import com.br.lojavirtual.model.dto.CartaoCreditoAsaasHolderInfo;
+import com.br.lojavirtual.model.dto.CobrancaApiAsaasCartao;
+import com.br.lojavirtual.model.dto.CobrancaGeradaCartaoCreditoAsaas;
 import com.br.lojavirtual.model.dto.CobrancaJunoAPI;
 import com.br.lojavirtual.model.dto.ConteudoBoletoJuno;
+import com.br.lojavirtual.model.dto.ErroResponseApiAsaas;
 import com.br.lojavirtual.model.dto.ErroResponseApiJuno;
+import com.br.lojavirtual.model.dto.ObjetoPostCarneJuno;
 import com.br.lojavirtual.model.dto.PagamentoCartaoCredito;
 import com.br.lojavirtual.model.dto.PedidoDTO;
 import com.br.lojavirtual.repository.BoletoJunoRepository;
@@ -78,6 +87,186 @@ public class PagamentoController implements Serializable {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "**/finalizarCompraCartao")
+	public ResponseEntity<String> finalizarCompraCartaoAsaas(		
+			@RequestParam("cardNumber") String cardNumber,
+			@RequestParam("holderName") String holderName,
+			@RequestParam("securityCode") String securityCode,
+			@RequestParam("expirationMonth") String expirationMonth,
+			@RequestParam("expirationYear") String expirationYear,
+			@RequestParam("idVendaCampo") Long idVendaCampo,
+			@RequestParam("cpf") String cpf,
+			@RequestParam("qtdparcela") Integer qtdparcela,
+			@RequestParam("cep") String cep,
+			@RequestParam("rua") String rua,
+			@RequestParam("numero") String numero,
+			@RequestParam("estado") String estado,
+			@RequestParam("cidade") String cidade) throws Exception {
+		
+		Pedido pedido = pedidoRepository.findById(idVendaCampo).orElse(null);
+
+		if (pedido == null) {
+			   return new ResponseEntity<String>("Código da venda não existe!", HttpStatus.OK);
+			}
+			
+			String cpfLimpo = cpf.replaceAll("\\.", "").replaceAll("\\-", "");
+			
+			if (!ValidaCPF.isCPF(cpfLimpo)) {
+			   return new ResponseEntity<String>("CPF informado é inválido!", HttpStatus.OK);	
+			}
+			
+			if (qtdparcela > 12 || qtdparcela <= 0) {
+				   return new ResponseEntity<String>("Quantidade de parcelas deve ser de 1 até 12!", HttpStatus.OK);	
+			}
+			
+			if (pedido.getValorTotal().doubleValue() <= 0) {
+			   return new ResponseEntity<String>("Valor da Venda não pode ser Zero(0)!", HttpStatus.OK);	
+			}
+			
+			List<BoletoJuno> cobrancas =  boletoJunoRepository.cobrancaDaVendaCompra(idVendaCampo);
+			
+			for (BoletoJuno boletoJuno : cobrancas) {
+				boletoJunoRepository.deleteById(boletoJuno.getId());
+				boletoJunoRepository.flush();
+			}
+			
+			/*INICIO - Gerando cobranca por cartão*/
+			ObjetoPostCarneJuno carne = new ObjetoPostCarneJuno();
+			
+			carne.setPayerCpfCnpj(cpfLimpo);
+			carne.setPayerName(holderName);
+			carne.setPayerPhone(pedido.getPessoa().getTelefone());			
+			
+			CobrancaApiAsaasCartao cobrancaApiAsaasCartao = new CobrancaApiAsaasCartao();	
+			cobrancaApiAsaasCartao.setCustomer(serviceJunoBoleto.buscaClientePessoaApiAsaas(carne));
+			cobrancaApiAsaasCartao.setBillingType(AsaasApiPagamentoStatus.CREDIT_CARD);
+			cobrancaApiAsaasCartao.setDescription("Venda realizada para cliente por cartão de crédito: ID Venda ->" + idVendaCampo);
+
+			if (qtdparcela == 1) {
+				cobrancaApiAsaasCartao.setInstallmentValue(pedido.getValorTotal().floatValue());			
+			} else {
+				BigDecimal valorParcela = pedido.getValorTotal()
+			            .divide(BigDecimal.valueOf(qtdparcela), RoundingMode.DOWN)
+			            .setScale(2, RoundingMode.DOWN);
+	
+	            cobrancaApiAsaasCartao.setInstallmentValue(valorParcela.floatValue());
+	            
+	    		cobrancaApiAsaasCartao.setInstallmentCount(qtdparcela);
+	    		cobrancaApiAsaasCartao.setDueDate(new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+	    		
+	    		/*Dados cartão de crédito*/
+	    		CartaoCreditoApiAsaas creditCard = new CartaoCreditoApiAsaas();
+	    		creditCard.setCcv(securityCode);
+	    		creditCard.setExpiryMonth(expirationMonth);
+	    		creditCard.setExpiryYear(expirationYear);
+	    		creditCard.setHolderName(holderName);
+	    		creditCard.setNumber(cardNumber);
+	    		
+	    		cobrancaApiAsaasCartao.setCreditCard(creditCard);
+	    		
+	    		PessoaFisica pessoaFisica = pedido.getPessoa();
+	    		CartaoCreditoAsaasHolderInfo creditCardHolderInfo = new CartaoCreditoAsaasHolderInfo();
+	    		creditCardHolderInfo.setName(pessoaFisica.getNome());
+	    		creditCardHolderInfo.setEmail(pessoaFisica.getEmail());
+	    		creditCardHolderInfo.setCpfCnpj(pessoaFisica.getCpf());
+	    		creditCardHolderInfo.setPostalCode(cep);
+	    		creditCardHolderInfo.setAddressNumber(numero);
+	    		creditCardHolderInfo.setAddressComplement(null);
+	    		creditCardHolderInfo.setPhone(pessoaFisica.getTelefone());
+	    		creditCardHolderInfo.setMobilePhone(pessoaFisica.getTelefone());
+	    		
+	    		cobrancaApiAsaasCartao.setCreditCardHolderInfo(creditCardHolderInfo);	
+	    		
+	    		String json = new ObjectMapper().writeValueAsString(cobrancaApiAsaasCartao);
+	    		
+	    		Client client = new HostIgnoringCliente(AsaasApiPagamentoStatus.URL_API_ASAAS).hostIgnoringCliente();
+	    		WebResource webResource = client.resource(AsaasApiPagamentoStatus.URL_API_ASAAS + "payments");
+	    		
+	    		ClientResponse clientResponse = webResource
+	    				.accept("application/json;charset=UTF-8")
+	    				.header("Content-Type", "application/json;charset=UTF-8")
+	    				.header("access_token", AsaasApiPagamentoStatus.API_KEY)
+	    				.post(ClientResponse.class, json);
+	    		
+	    		String stringRetorno = clientResponse.getEntity(String.class);
+	    		int status = clientResponse.getStatus();
+	    		clientResponse.close();	  
+	    		
+	    		ObjectMapper objectMapper = new ObjectMapper();
+	    		objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+	    		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);	    		
+	    		
+	    		if (status != 200) {/*Deu erro*/
+	    		  	
+	    			for (BoletoJuno boletoJuno : cobrancas) {
+	    				
+	    				if (boletoJunoRepository.existsById(boletoJuno.getId())) {
+	    				   boletoJunoRepository.deleteById(boletoJuno.getId());
+	    				   boletoJunoRepository.flush();
+	    				}
+	    			}
+	    			
+	    			ErroResponseApiAsaas apiAsaas = objectMapper
+	    					.readValue(stringRetorno, new TypeReference<ErroResponseApiAsaas>() {});
+	    			
+	    			return new ResponseEntity<String>("Erro ao efetuar cobrança: " + apiAsaas.listaErros(), HttpStatus.OK);
+	    		}
+	    		
+	    		CobrancaGeradaCartaoCreditoAsaas cartaoCredito = objectMapper.
+						readValue(stringRetorno,  new TypeReference<CobrancaGeradaCartaoCreditoAsaas>() {});
+	    		
+	    		int recorrencia = 1;
+	    		List<BoletoJuno> boletoJunos = new ArrayList<BoletoJuno>();
+	    		
+	    		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    		Date dataCobranca = dateFormat.parse(cobrancaApiAsaasCartao.getDueDate());
+	    		Calendar calendar = Calendar.getInstance();
+	    		
+	    		for(int p = 1 ; p <= qtdparcela; p++) {
+	    			
+	    			BoletoJuno boletoJuno = new BoletoJuno();
+
+	    			boletoJuno.setChargeICartao(cartaoCredito.getId());
+	    			boletoJuno.setCheckoutUrl(cartaoCredito.getInvoiceUrl());
+	    			boletoJuno.setCode(cartaoCredito.getId());
+	    			boletoJuno.setDataVencimento(dateFormat.format(dataCobranca));
+	    			
+	    			calendar.setTime(dataCobranca);
+	    			calendar.add(Calendar.MONTH, 1);
+	    			dataCobranca = calendar.getTime();
+	    			
+	    			boletoJuno.setEmpresa(pedido.getEmpresaId());
+	    			boletoJuno.setIdChrBoleto(cartaoCredito.getId());
+	    			boletoJuno.setIdPix(cartaoCredito.getId());
+	    			boletoJuno.setInstallmentLink(cartaoCredito.getInvoiceUrl());
+	    			boletoJuno.setQuitado(false);
+	    			boletoJuno.setRecorrencia(recorrencia);
+	    			boletoJuno.setValor(BigDecimal.valueOf(cobrancaApiAsaasCartao.getInstallmentValue()));
+	    			boletoJuno.setPedidoId(pedido);
+	    			
+	    			recorrencia ++;
+	    			boletoJunos.add(boletoJuno);
+	    		}
+	    		
+	    		boletoJunoRepository.saveAllAndFlush(boletoJunos);
+	    		
+	    		if (cartaoCredito.getStatus().equalsIgnoreCase("CONFIRMED")) {
+	    			
+	  			  for (BoletoJuno boletoJuno : boletoJunos) {
+	  				  boletoJunoRepository.quitarBoletoById(boletoJuno.getId());
+	  			   }
+	  			   
+	  			  pedidoRepository.updateFinalizaVenda(pedido.getId());
+	  			  
+	  			  return new ResponseEntity<String>("sucesso", HttpStatus.OK);
+	  		    }else {
+	  			    return new ResponseEntity<String>("Pagamento não pode ser finalizado: Status:" + cartaoCredito.getStatus(), HttpStatus.OK);
+	  		    }	    		
+            }
+			
+			return new ResponseEntity<String>("Nenhuma operação realizada!",HttpStatus.OK);			
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "**/finalizarCompraCartaoJuno")
 	public ResponseEntity<String> finalizarCompraCartao(
 			@RequestParam("cardHash") String cardHash,
 			@RequestParam("cardNumber") String cardNumber,

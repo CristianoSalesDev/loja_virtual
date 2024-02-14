@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 
 import com.br.lojavirtual.model.dto.CriarWebHook;
+import com.br.lojavirtual.model.dto.ObjetoPostCarneJuno;
 import com.br.lojavirtual.service.ServiceJunoBoleto;
 
 import junit.framework.TestCase;
@@ -16,6 +17,44 @@ public class TesteJunoBoleto extends TestCase {
 
 	@Autowired
 	private ServiceJunoBoleto serviceJunoBoleto;
+	
+	@Test
+	public void testgerarBoletoApiAsaas() throws Exception {
+		
+		ObjetoPostCarneJuno dados = new ObjetoPostCarneJuno();
+		dados.setEmail("cristianoaragaosales@gmail.com");
+		dados.setPayerName("Cristiano de Aragão Sales");
+		dados.setPayerCpfCnpj("54636299353");
+		dados.setPayerPhone("85999815724");
+		dados.setIdVenda(20L);
+		
+		String retorno = serviceJunoBoleto.gerarBoletoApiAsaas(dados);
+		
+		System.out.println(retorno);
+	}
+	
+	@Test
+	public void testbuscaClientePessoaApiAsaas()  throws Exception{
+		
+		ObjetoPostCarneJuno dados = new ObjetoPostCarneJuno();
+		dados.setEmail("cristianoaragaosales@gmail.com");
+		dados.setPayerName("Cristiano de Aragão Sales");
+		dados.setPayerCpfCnpj("54636299353");
+		dados.setPayerPhone("85999815724");
+		
+//		serviceJunoBoleto.buscaClientePessoaApiAsaas(dados);
+		String  customer_id =serviceJunoBoleto.buscaClientePessoaApiAsaas(dados);
+		
+		assertEquals("cus_000078450786", customer_id);
+	}
+	
+	@Test
+	public void testcriarChavePixAsaas() throws Exception {
+		
+		String chaveAPi = serviceJunoBoleto.criarChavePixAsaas();
+		
+		System.out.println("Chave Asass API" + chaveAPi);
+	}	
 	
 	@Test
 	public void listaWebHook() throws Exception {
