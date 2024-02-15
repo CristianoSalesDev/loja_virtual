@@ -21,7 +21,7 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.map"></script>
 
-<script type="text/javascript" src="https://www.boletobancario.com/boletofacil/wro/direct-checkout.min.js"></script>
+<!-- <script type="text/javascript" src="https://www.boletobancario.com/boletofacil/wro/direct-checkout.min.js"></script>  -->
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
@@ -198,7 +198,7 @@
 
 <script type="text/javascript">
 
-   var checkout = new DirectCheckout('10951138DA2E18AA0275F43ACA03649EC406D9F5331D9F78CC4169A965B873AB35FFAEE08E46454E');
+  <!-- var checkout = new DirectCheckout('10951138DA2E18AA0275F43ACA03649EC406D9F5331D9F78CC4169A965B873AB35FFAEE08E46454E'); Era quando usava Juno -->
 
    $(document).ready(function() {
 	   
@@ -345,27 +345,31 @@
 					expirationYear: anovalidade
 			  };
 		  
-		  var isValidCardNumber = checkout.isValidCardNumber(cardData.cardNumber);
+		  //var isValidCardNumber = checkout.isValidCardNumber(cardData.cardNumber); -- Era quando usava Juno
+		  var isValidCardNumber = (cardData.cardNumber != null);
 		  
 		  if (isValidCardNumber == false){
 			  alert('Número do cartão é inválido');
 			  return;
 		  }
 		  
-		  var isValidSecurityCode = checkout.isValidSecurityCode(cardData.cardNumber, cvv);
+		  //var isValidSecurityCode = checkout.isValidSecurityCode(cardData.cardNumber, cvv); -- Era quando usava Juno
+		  var isValidSecurityCode = ((cardData.cardNumber != null) && (cvv != null));
 		  
 		  if (isValidSecurityCode == false){
 			  alert('Códivo CVV de segurança é inválido.');
 			  return;
 		  }
 		  
-		  var isValidExpireDate = checkout.isValidExpireDate(cardData.expirationMonth, cardData.expirationYear);
+		  //var isValidExpireDate = checkout.isValidExpireDate(cardData.expirationMonth, cardData.expirationYear); -- Era quando usava Juno
+		  var isValidExpireDate = ((cardData.expirationMonth != null) && (cardData.expirationYear != null));
 		  
 		  if (isValidExpireDate == false){
 			  alert('Data de válidade é inválida');
 			  return;
 		  } 
-		  
+		 
+		  /*  Esta função foi substituída pela validação mas abaixo, pois essa era quando usava Juno
 		  var isValidCardData = checkout.isValidCardData(cardData, function(error) {
 			  
 			  if (error.toString().includes('Invalid holder name', error)){
@@ -376,6 +380,9 @@
 			  
 			  return;
 		  });
+		  */
+		  
+		  var isValidCardData = (cardData != null); 
 		  
 			//  console.info('isValidCardData' + isValidCardData);
 			//  console.info('isValidExpireDate' + isValidExpireDate);
@@ -383,9 +390,7 @@
 			//  console.info('isValidCardNumber' + isValidCardNumber);
 		  if (isValidCardData && isValidExpireDate && isValidSecurityCode && isValidCardNumber){
 			  
-			    checkout.getCardHash(cardData, function(cardHash) {
-			    	
-			    	console.info("Hash: " + cardData);
+			  	console.info("Hash: " + cardData);
 			      
 				document.getElementById('buttonrealizarPagamento').disabled = true;
 				document.getElementById('buttonrealizarPagamento').value = 'Efetuando pagamento...';
@@ -394,7 +399,6 @@
 				   method: 'POST',
 				   url: 'finalizarCompraCartao',
 				   data: {
-					   cardHash: cardHash,
 					   cardNumber: cardData.cardNumber,
 					   holderName: cardData.holderName,
 					   securityCode: cardData.securityCode,
@@ -430,14 +434,7 @@
 				   
 				   alert('Erro ao efetuar pagamento: ' + errorThrown);
 				   return;
-			   });				  
-			 
-			  }, function(error) {
-			      alert('Não foi possível gerar o HASH do cartão de crédito": ' + error);
-				  return;
-				  
-			  });
-			  
+			   });			  
 		  }else {
 			  alert('O pagamento não pode ser realizado.');
 			  return;

@@ -149,6 +149,7 @@ public class PagamentoController implements Serializable {
 			            .setScale(2, RoundingMode.DOWN);
 	
 	            cobrancaApiAsaasCartao.setInstallmentValue(valorParcela.floatValue());
+			}    
 	            
 	    		cobrancaApiAsaasCartao.setInstallmentCount(qtdparcela);
 	    		cobrancaApiAsaasCartao.setDueDate(new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
@@ -261,9 +262,6 @@ public class PagamentoController implements Serializable {
 	  		    }else {
 	  			    return new ResponseEntity<String>("Pagamento não pode ser finalizado: Status:" + cartaoCredito.getStatus(), HttpStatus.OK);
 	  		    }	    		
-            }
-			
-			return new ResponseEntity<String>("Nenhuma operação realizada!",HttpStatus.OK);			
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "**/finalizarCompraCartaoJuno")
