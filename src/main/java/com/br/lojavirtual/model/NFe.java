@@ -48,6 +48,9 @@ public class NFe implements Serializable {
 	@Column(nullable = false)
 	private String tipo;
 	
+	@Column(nullable = false)
+	private String chave;
+	
 	@Column(columnDefinition = "text", nullable = false)	
 	private String xml;
 	
@@ -116,6 +119,14 @@ public class NFe implements Serializable {
 
 	public void setEmpresaId(PessoaJuridica empresaId) {
 		this.empresaId = empresaId;
+	}	
+
+	public String getChave() {
+		return chave;
+	}
+
+	public void setChave(String chave) {
+		this.chave = chave;
 	}
 
 	@Override

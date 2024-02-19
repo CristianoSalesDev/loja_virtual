@@ -5,11 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 
+import com.br.lojavirtual.model.Pedido;
+import com.br.lojavirtual.model.dto.ObjetoDevolucaoNotaFiscalWebMania;
+import com.br.lojavirtual.model.dto.ObjetoEmissaoNotaFiscalWebMania;
+import com.br.lojavirtual.model.dto.ObjetoEstornoNotaFiscalWebMania;
 import com.br.lojavirtual.model.dto.WebManiaClienteNF;
 import com.br.lojavirtual.model.dto.WebManiaNotaFicalEletronica;
 import com.br.lojavirtual.model.dto.WebManiaPedidoNF;
 import com.br.lojavirtual.model.dto.WebManiaProdutoNF;
+import com.br.lojavirtual.repository.PedidoRepository;
 import com.br.lojavirtual.service.WebManiaNotaFiscalService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import junit.framework.TestCase;
 
@@ -19,6 +27,25 @@ public class TesteNotaFiscal extends TestCase {
 	
 	@Autowired
 	private WebManiaNotaFiscalService webManiaNotaFiscalService;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
+	@Test
+	public void testeGravaNotaNoBanco() throws Exception {
+		String json = emiteNotaFiscal();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+		
+		ObjetoEmissaoNotaFiscalWebMania notaFiscalWebMania = objectMapper
+				.readValue(json, new TypeReference<ObjetoEmissaoNotaFiscalWebMania>() {});
+		
+		Pedido pedido = pedidoRepository.findById(20L).get();
+		
+		webManiaNotaFiscalService.gravaNotaParaVenda(notaFiscalWebMania, pedido);
+		
+	}	
 	
 	@Test
 	public void testeEmissaoNota() throws Exception {
@@ -102,6 +129,58 @@ public class TesteNotaFiscal extends TestCase {
 		System.out.println("-------->> Retorno Emissão nota fiscal: " + retorno);
 		
 		return retorno;
+	}
+	
+	@Test
+	public void cancelNota() throws Exception {
+		
+		String retorno = webManiaNotaFiscalService.
+				cancelarNotaFiscal("9c3b05c9-598b-475d-b0a4-9ad59d54e377", "cancelamento teste");
+		
+		System.out.println("---------->> Retorno cancelamento nota fiscal: " +  retorno);
+		
+	}
+	
+	@Test
+	public void consultarNota() throws Exception {
+		
+		String retorno = webManiaNotaFiscalService.
+				consultarNotaFiscal("9c3b05c9-598b-475d-b0a4-9ad59d54e377");
+		
+		System.out.println("---------->> Retorno consulta nota fiscal: " +  retorno);
+		
+	}
+	
+	@Test
+	public void estornoNota() throws Exception {
+		
+		ObjetoEstornoNotaFiscalWebMania objetoEstornoNotaFiscalWebMania = new  ObjetoEstornoNotaFiscalWebMania();
+		
+		objetoEstornoNotaFiscalWebMania.setChave("41240226934453000189550010000000141180434020");
+		objetoEstornoNotaFiscalWebMania.setNatureza_operacao("999");
+		objetoEstornoNotaFiscalWebMania.setCodigo_cfop("1.102");
+		objetoEstornoNotaFiscalWebMania.setAmbiente("2");
+		objetoEstornoNotaFiscalWebMania.setVolume("1");
+		String retorno = webManiaNotaFiscalService.estornoNotaFiscal(objetoEstornoNotaFiscalWebMania);
+		
+		System.out.println("----------->> Retorno do estorno da nota: " + retorno);
 	}	
-
+	
+	@Test
+	public void devolucaoNota() throws Exception {
+		
+		ObjetoDevolucaoNotaFiscalWebMania objetoEstornoNotaFiscalWebMania = new  ObjetoDevolucaoNotaFiscalWebMania();
+		
+		objetoEstornoNotaFiscalWebMania.setChave("41240226934453000189550010000000141180434020");
+		objetoEstornoNotaFiscalWebMania.setNatureza_operacao("Devolução de venda de produção do estabelecimento");
+		objetoEstornoNotaFiscalWebMania.setCodigo_cfop("1.102");
+		objetoEstornoNotaFiscalWebMania.setAmbiente("2");
+		objetoEstornoNotaFiscalWebMania.setVolume(1);
+		objetoEstornoNotaFiscalWebMania.setProdutos(new int[] {1});
+		objetoEstornoNotaFiscalWebMania.setQuantidade(new int[] {1});
+		
+		String retorno = webManiaNotaFiscalService.devolucaoNotaFiscal(objetoEstornoNotaFiscalWebMania);
+		
+		System.out.println("----------->> Retorno do estorno da nota: " + retorno);
+	}	
 }
