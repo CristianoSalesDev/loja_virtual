@@ -10,5 +10,11 @@ public class ApiTokenIntegracao {
 	
     public static final String TOKEN_PRIVATE_JUNO = "39F561904D53B1A6B198CDF6F775D911D0FA3CDBE3C6CD69117E9BEB3BE54D1E";
     
-    public static final String CHAVE_BOLETO_PIX = "7cf146ca-9230-4d77-ad3d-2778cafcd856";	
+    public static final String CHAVE_BOLETO_PIX = "7cf146ca-9230-4d77-ad3d-2778cafcd856";
+    
+    public static final String TOKEN_GET_RESPONSE = "api-key 3flkoky6ln2oqisussrfxayyi7awrhfe";
+    
+    public static final String URL_END_POINT_GET_RESPONSE = "https://api.getresponse.com/v3/";    
+    
+    
 }
