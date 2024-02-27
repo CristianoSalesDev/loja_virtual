@@ -12,7 +12,7 @@ import com.br.lojavirtual.model.Usuario;
 
 public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 
-	@Query("SELECT u FROM Usuario u WHERE u.login = ?1")
+	@Query(value = "select u from Usuario u where u.login = ?1")
 	Usuario findUsuarioByLogin(String login);
 
 	@Query(value = "select u from Usuario u where u.data_atual_senha <= current_date - 90")
@@ -34,4 +34,8 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	@Query(nativeQuery = true, value = "insert into t_usuario_acesso(usuario_id, acesso_id) values (?1, (select id from t_acesso where descricao = ?2 limit 1))")
 	void insereAcessoUserPj(Long iduser, String acesso);
 
+	@Transactional
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
+	@Query(nativeQuery = true, value = "update t_usuario set senha = ?1 where login = ?2")	
+	void updateSenhaUser(String senha, String login);
 }

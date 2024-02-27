@@ -1,12 +1,15 @@
 package com.br.lojavirtual.controller;
 
 import java.util.List;
+import java.util.UUID;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,13 +22,17 @@ import com.br.lojavirtual.enums.TipoPessoa;
 import com.br.lojavirtual.model.Endereco;
 import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.PessoaJuridica;
+import com.br.lojavirtual.model.Usuario;
 import com.br.lojavirtual.model.dto.CepDTO;
 import com.br.lojavirtual.model.dto.ConsultaCnpjDto;
+import com.br.lojavirtual.model.dto.ObjetoMsgGeral;
 import com.br.lojavirtual.repository.EnderecoRepository;
 import com.br.lojavirtual.repository.PessoaRepository;
 import com.br.lojavirtual.repository.PesssoaFisicaRepository;
+import com.br.lojavirtual.repository.UsuarioRepository;
 import com.br.lojavirtual.service.PessoaUserService;
 import com.br.lojavirtual.service.ServiceContagemAcessoApi;
+import com.br.lojavirtual.service.ServiceSendEmail;
 import com.br.lojavirtual.util.ValidaCPF;
 import com.br.lojavirtual.util.ValidaCnpj;
 
@@ -45,8 +52,13 @@ public class PessoaController {
 	private PesssoaFisicaRepository pesssoaFisicaRepository;
 	
 	@Autowired
-	private ServiceContagemAcessoApi serviceContagemAcessoApi; 
+	private ServiceContagemAcessoApi serviceContagemAcessoApi;
 	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private ServiceSendEmail serviceSendEmail;
 	
 	@ResponseBody
 	@GetMapping(value = "**/consultaPfNome/{nome}")
@@ -104,7 +116,7 @@ public class PessoaController {
 
 	/*end-point é microsservicos é um API*/
 	@ResponseBody
-	@PostMapping(value = "/salvarPj")
+	@PostMapping(value = "**/salvarPj")
 	public ResponseEntity<PessoaJuridica> salvarPj(@RequestBody @Valid PessoaJuridica pessoaJuridica) throws ExceptionLojaVirtual{
 		
 		if (pessoaJuridica == null) {
@@ -167,7 +179,7 @@ public class PessoaController {
 
 	/*end-point é microsservicos é um API*/
 	@ResponseBody
-	@PostMapping(value = "/salvarPf")
+	@PostMapping(value = "**/salvarPf")
 	public ResponseEntity<PessoaFisica> salvarPf(@RequestBody PessoaFisica pessoaFisica) throws ExceptionLojaVirtual{
 		
 		if (pessoaFisica == null) {
@@ -191,5 +203,30 @@ public class PessoaController {
 		return new ResponseEntity<PessoaFisica>(pessoaFisica, HttpStatus.OK);
 	}
 	
+	@ResponseBody
+	@PostMapping(value = "**/recuperarSenha")
+	public ResponseEntity<ObjetoMsgGeral> recuperarAcesso(@RequestBody String login) throws Exception, MessagingException {
+		
+		Usuario usuario = usuarioRepository.findUsuarioByLogin(login);
+		
+		if (usuario == null) {
+		   return new ResponseEntity<ObjetoMsgGeral>(new ObjetoMsgGeral("Usuário não encontrado"), HttpStatus.OK);	
+		}
+		
+		String senha = UUID.randomUUID().toString();
+		
+		senha = senha.substring(0, 6);
+		
+		String senhaCriptografada = new BCryptPasswordEncoder().encode(senha);
+		
+		usuarioRepository.updateSenhaUser(senhaCriptografada, login);
+		
+		StringBuilder msgEmail = new StringBuilder();
+		msgEmail.append("<b>Sua nova senha é:</b>").append(senha);
+		
+		serviceSendEmail.enviarEmailHtml("Atualizar/Alterar Senha", senha, usuario.getPessoa().getEmail());
+		
+	    return new ResponseEntity<ObjetoMsgGeral>(new ObjetoMsgGeral("Senha enviada para seu e-mail"), HttpStatus.OK);
+	}
 	
 }

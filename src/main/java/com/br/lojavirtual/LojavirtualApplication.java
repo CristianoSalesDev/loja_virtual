@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -64,6 +65,17 @@ public class LojavirtualApplication implements AsyncConfigurer, WebMvcConfigurer
 		executor.initialize();
 		
 		return executor;
-	}    
-
+	}   
+	
+	/* Mapeamento Global que refletem/libera em todo o sistema */
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+		.allowedMethods("*")
+		.allowedHeaders("*")
+		.exposedHeaders("*")
+		.allowedOrigins("*");
+		
+		//WebMvcConfigurer.super.addCorsMappings(registry);
+	}	
 }
