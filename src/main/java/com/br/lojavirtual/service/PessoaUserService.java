@@ -2,6 +2,10 @@ package com.br.lojavirtual.service;
 
 import java.util.Calendar;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +39,22 @@ public class PessoaUserService {
 	@Autowired
 	private PesssoaFisicaRepository pesssoaFisicaRepository;
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	
+	public Boolean possuiAcesso(String username, String acessos) {
+		
+		String sql = " select count(1) > 0 from t_usuario_acesso as ua " 
+		            +" inner join t_usuario as usu on (usu.id = ua.usuario_id) "
+		            +" inner join t_acesso as ace on (ace.id = ua.acesso_id) "
+		            +" where usu.login = '"+username+"' "
+			        +" and ace.descricao in ("+acessos+ ") ";
+		
+	    Query query = entityManager.createNativeQuery(sql);
+	    
+	    return Boolean.valueOf(query.getSingleResult().toString());
+	}
+	
 	
 	public PessoaJuridica salvarPessoaJuridica(PessoaJuridica juridica) {
 		

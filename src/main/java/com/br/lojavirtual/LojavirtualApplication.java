@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -36,7 +37,8 @@ public class LojavirtualApplication implements AsyncConfigurer, WebMvcConfigurer
     	/* $2a$10$t8wQ4WntYXJPTKdeHqJdseHJC3xrgfXN02LhoPDH46AvWA/g6lXuS  */
     	
 		SpringApplication.run(LojavirtualApplication.class, args);
-			//System.out.println(new BCryptPasswordEncoder().encode("123"));	
+			
+		System.out.println(new BCryptPasswordEncoder().encode("123")); // imprimi no console a senha criptografada 123
 		 
 	}
     
