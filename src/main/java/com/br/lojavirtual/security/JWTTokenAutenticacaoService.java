@@ -52,10 +52,16 @@ public class JWTTokenAutenticacaoService {
 		/*Dá a resposta pra tela e para o cliente, outra API, navegador, aplicativo, javascript, outra chamada java*/
 		response.addHeader(HEADER_STRING, token);
 		
-		liberacaoCors(response);		
+		liberacaoCors(response);
 		
-		/*Usado para ver no Postman para teste*/
-		response.getWriter().write("{\"Authorization\": \"" + token + "\", \"username\":\""+username+"\"}");
+		Usuario usuario = ApplicationContextLoad.
+				getApplicationContext().
+				getBean(UsuarioRepository.class).findUsuarioByLogin(username);
+
+		System.out.println(usuario.getEmpresaId().getId());
+		
+		/*Usado para ver no Postman para teste */
+		response.getWriter().write("{\"Authorization\": \""	+ token + "\", \"username\":\""+ username +"\", \"empresaId\":\""+ usuario.getEmpresaId().getId() +"\"}");
 		
 	}
 	
