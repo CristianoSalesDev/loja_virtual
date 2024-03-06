@@ -17,4 +17,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 	
 	@Query("select a from Categoria a where upper(trim(a.descricao)) like %?1%")
 	public List<Categoria> buscarCategoriaDes(String descricao);
+
+    @Query("select a from Categoria a where a.empresaId.id = ?1")  
+	public List<Categoria> findAll(Long codEmpresa);
 }
