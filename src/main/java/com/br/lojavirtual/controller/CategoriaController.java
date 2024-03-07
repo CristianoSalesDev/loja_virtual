@@ -16,6 +16,7 @@ import com.br.lojavirtual.ExceptionLojaVirtual;
 import com.br.lojavirtual.model.Categoria;
 import com.br.lojavirtual.model.dto.CategoriaDto;
 import com.br.lojavirtual.repository.CategoriaRepository;
+import com.google.gson.Gson;
 
 @RestController
 public class CategoriaController {
@@ -33,6 +34,15 @@ public class CategoriaController {
 	}
 	
 	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/buscarPorId/{id}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<Categoria> buscarPorId(@PathVariable("id") Long id) { 
+		
+		Categoria categoriaId = categoriaRepository.findById(id).get();
+		
+		return new ResponseEntity<Categoria>(categoriaId,HttpStatus.OK);
+	}	
+	
+	@ResponseBody /*Poder dar um retorno da API*/
 	@GetMapping(value = "**/listarCategoria/{codEmpresa}") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<List<Categoria>> listarCategoria(@PathVariable("codEmpresa") Long codEmpresa) { 
 		
@@ -43,15 +53,15 @@ public class CategoriaController {
 	
 	@ResponseBody /*Poder dar um retorno da API*/
 	@PostMapping(value = "**/deleteCategoria") /*Mapeando a url para receber JSON*/
-	public ResponseEntity<?> deleteAcesso(@RequestBody Categoria categoria) { /*Recebe o JSON e converte pra Objeto*/
+	public ResponseEntity<String> deleteAcesso(@RequestBody Categoria categoria) throws ExceptionLojaVirtual { /*Recebe o JSON e converte pra Objeto*/
 		
 		if (categoriaRepository.findById(categoria.getId()).isPresent() == false) {
-			return new ResponseEntity("Categoria já foi removida",HttpStatus.OK);
+			throw new ExceptionLojaVirtual("Categoria já foi removida");
 		}
 		
 		categoriaRepository.deleteById(categoria.getId());
 		
-		return new ResponseEntity("Categoria Removida",HttpStatus.OK);
+		return new ResponseEntity<String>(new Gson().toJson("Categoria Removida com sucesso"),HttpStatus.OK);
 	}
 	
 	@ResponseBody /*Poder dar um retorno da API*/
