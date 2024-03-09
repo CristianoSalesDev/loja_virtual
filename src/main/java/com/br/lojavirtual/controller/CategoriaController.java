@@ -3,6 +3,9 @@ package com.br.lojavirtual.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +45,27 @@ public class CategoriaController {
 		
 		return new ResponseEntity<List<Categoria>>(acesso,HttpStatus.OK);
 	}	
+	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/listaPorPageCategoria/{idEmpresa}/{pagina}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<Categoria>> pageCategoria(@PathVariable("idEmpresa") Long idEmpresa,
+			                                             @PathVariable("pagina") Integer pagina) {
+		
+		Pageable pageable = PageRequest.of(pagina, 5, Sort.by("descricao")); 
+		
+		List<Categoria> lista = categoriaRepository.findPorPage(idEmpresa, pageable);
+		
+		return new ResponseEntity<List<Categoria>>(lista, HttpStatus.OK);
+	}
+	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/qtdPaginaCategoria/{idEmpresa}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<Integer> qtdPagina(@PathVariable("idEmpresa") Long idEmpresa) {
+		
+		Integer qtdPagina = categoriaRepository.qtdPagina(idEmpresa);
+		
+		return new ResponseEntity<Integer>(qtdPagina, HttpStatus.OK);
+	}
 	
 	@ResponseBody /*Poder dar um retorno da API*/
 	@GetMapping(value = "**/buscarPorId/{id}") /*Mapeando a url para receber JSON*/
