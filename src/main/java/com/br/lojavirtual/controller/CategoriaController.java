@@ -27,7 +27,7 @@ public class CategoriaController {
 	@Autowired
 	private CategoriaRepository categoriaRepository; 
 	
-	@ResponseBody /*Poder dar um retorno da API*/
+	@ResponseBody /* Pesquisa por Descrição e empresa da Categoria */
 	@GetMapping(value = "**/buscarPorDescricaoCategoria/{descricao}") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<List<Categoria>> buscarPorDescricao(@PathVariable("descricao") String descricao) { 
 		
@@ -36,7 +36,7 @@ public class CategoriaController {
 		return new ResponseEntity<List<Categoria>>(acesso,HttpStatus.OK);
 	}
 	
-	@ResponseBody /*Poder dar um retorno da API*/
+	@ResponseBody /* Pesquisa por Descrição e empresa da Categoria */
 	@GetMapping(value = "**/buscarPorDescricaoCategoria/{descricao}/{empresaId}") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<List<Categoria>> buscarPorDescricao2(@PathVariable("descricao") String descricao,
 			                                                           @PathVariable("empresaId") Long empresaId) { 

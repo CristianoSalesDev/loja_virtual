@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -35,6 +39,12 @@ public class Acesso implements GrantedAuthority {
 	
 	@Column(nullable = false)	
 	private String descricao; /* Tipo de usuário: ROLE_ADMIN, ROLE_SUPERVISOR, ROLE_USUARIO */
+	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false,
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_ace_fk"))
+	private PessoaJuridica empresaId = new PessoaJuridica();	
+	
 
 	@JsonIgnore
 	@Override
@@ -65,6 +75,14 @@ public class Acesso implements GrantedAuthority {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+	
+	public PessoaJuridica getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(PessoaJuridica empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

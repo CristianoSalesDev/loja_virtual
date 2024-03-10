@@ -3,6 +3,9 @@ package com.br.lojavirtual.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.lojavirtual.ExceptionLojaVirtual;
 import com.br.lojavirtual.model.Acesso;
+import com.br.lojavirtual.model.Categoria;
 import com.br.lojavirtual.repository.AcessoRepository;
 import com.br.lojavirtual.service.AcessoService;
+import com.google.gson.Gson;
 
 @Controller
 @RestController
@@ -28,6 +33,38 @@ public class AcessoController {
 	
 	@Autowired
 	private AcessoRepository acessoRepository;
+	
+	@ResponseBody /* Pesquisa por Descrição e empresa do Acesso */
+	@GetMapping(value = "**/buscarPorDescricaoAcesso/{descricao}/{empresaId}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<Acesso>> buscarPorDescricaoAcesso(@PathVariable("descricao") String descricao,
+			                                                           @PathVariable("empresaId") Long empresaId) { 
+		
+		List<Acesso> acesso = acessoRepository.buscarAcessoDes(descricao.toUpperCase(), empresaId);
+		
+		return new ResponseEntity<List<Acesso>>(acesso,HttpStatus.OK);
+	}	
+	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/qtdPaginaAcesso/{idEmpresa}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<Integer> qtdPagina(@PathVariable("idEmpresa") Long idEmpresa) {
+		
+		Integer qtdPagina = acessoRepository.qtdPagina(idEmpresa);
+		
+		return new ResponseEntity<Integer>(qtdPagina, HttpStatus.OK);
+	}
+	
+	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/listaPorPageAcesso/{idEmpresa}/{pagina}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<Acesso>> pageAcesso(@PathVariable("idEmpresa") Long idEmpresa,
+			                                             @PathVariable("pagina") Integer pagina) {
+		
+		Pageable pageable = PageRequest.of(pagina, 5, Sort.by("descricao")); 
+		
+		List<Acesso> lista = acessoRepository.findPorPage(idEmpresa, pageable);
+		
+		return new ResponseEntity<List<Acesso>>(lista, HttpStatus.OK);
+	}	
 	
 	@ResponseBody /* Poder dar um retorno da API */
 	@PostMapping(value = "**/salvarAcesso") /* Mapeando a URL para receber o JSON */
@@ -48,21 +85,25 @@ public class AcessoController {
 	
 	@ResponseBody /* Poder dar um retorno da API */
 	@PostMapping(value = "/deleteAcesso") /* Mapeando a URL para receber o JSON */
-	public ResponseEntity<?> deleteAcesso(@RequestBody Acesso acesso) { /* Recebe o JSON e convert pra objeto */
+	public ResponseEntity<String> deleteAcesso(@RequestBody Acesso acesso) throws ExceptionLojaVirtual { /* Recebe o JSON e convert pra objeto */
+		
+		if (acessoRepository.findById(acesso.getId()).isPresent() == false) {
+			throw new ExceptionLojaVirtual("Acesso já foi removido");
+		}		
 	
 		acessoRepository.deleteById(acesso.getId());
 		
-		return new ResponseEntity("Acesso Removido",HttpStatus.OK);
+		return new ResponseEntity<String>(new Gson().toJson("Acesso Removido"),HttpStatus.OK);
 		
 	}
 	
 	@ResponseBody
 	@DeleteMapping(value = "/deleteAcessoPorId/{id}")
-	public ResponseEntity<?> deleteAcessoPorId(@PathVariable("id") Long id) { 
+	public ResponseEntity<String> deleteAcessoPorId(@PathVariable("id") Long id) { 
 		
 		acessoRepository.deleteById(id);
 		
-		return new ResponseEntity("Acesso Removido",HttpStatus.OK);
+		return new ResponseEntity<String>(new Gson().toJson("Acesso Removido"),HttpStatus.OK);
 	}	
 	
 	@ResponseBody

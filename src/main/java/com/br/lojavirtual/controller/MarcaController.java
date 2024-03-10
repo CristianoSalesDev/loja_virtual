@@ -5,6 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.lojavirtual.ExceptionLojaVirtual;
+import com.br.lojavirtual.model.Categoria;
 import com.br.lojavirtual.model.Marca;
 import com.br.lojavirtual.repository.MarcaRepository;
+import com.google.gson.Gson;
 
 @Controller
 @RestController
@@ -27,8 +32,39 @@ public class MarcaController {
 	@Autowired
 	private MarcaRepository marcaRepository;
 	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/listaPorPageMarca/{idEmpresa}/{pagina}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<Marca>> pageMarca(@PathVariable("idEmpresa") Long idEmpresa,
+			                                             @PathVariable("pagina") Integer pagina) {
+		
+		Pageable pageable = PageRequest.of(pagina, 5, Sort.by("descricao")); 
+		
+		List<Marca> lista = marcaRepository.findPorPage(idEmpresa, pageable);
+		
+		return new ResponseEntity<List<Marca>>(lista, HttpStatus.OK);
+	}	
+	
+	@ResponseBody /* Pesquisa por Descrição e empresa da Marca */
+	@GetMapping(value = "**/buscarPorDescricaoMarca/{descricao}/{empresaId}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<Marca>> buscarPorDescricaoMarca(@PathVariable("descricao") String descricao,
+			                                                           @PathVariable("empresaId") Long empresaId) { 
+		
+		List<Marca> lista = marcaRepository.buscarMarcaDes(descricao.toUpperCase(), empresaId);
+		
+		return new ResponseEntity<List<Marca>>(lista,HttpStatus.OK);
+	}	
+	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/qtdPaginaMarca/{idEmpresa}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<Integer> qtdPagina(@PathVariable("idEmpresa") Long idEmpresa) {
+		
+		Integer qtdPagina = marcaRepository.qtdPagina(idEmpresa);
+		
+		return new ResponseEntity<Integer>(qtdPagina, HttpStatus.OK);
+	}	
+	
 	@ResponseBody 
-	@PostMapping(value = "**/salvarMarca") 
+	@PostMapping(value = "**/salvarMarca") /*Mapeando a url para receber JSON*/ 
 	public ResponseEntity<Marca> salvarMarca(@RequestBody @Valid Marca marca) throws ExceptionLojaVirtual { /*Recebe o JSON e converte pra Objeto*/
 		
 		if (marca.getId() == null) {
@@ -44,17 +80,21 @@ public class MarcaController {
 		return new ResponseEntity<Marca>(marcaSalvo, HttpStatus.OK);
 	}
 	
-	@ResponseBody /*Poder dar um retorno da API*/
+	@ResponseBody /* Deletar Marca */
 	@PostMapping(value = "**/deleteMarca") /*Mapeando a url para receber JSON*/
-	public ResponseEntity<String> deleteMarca(@RequestBody Marca marca) { /*Recebe o JSON e converte pra Objeto*/
+	public ResponseEntity<String> deleteMarca(@RequestBody Marca marca) throws ExceptionLojaVirtual { /*Recebe o JSON e converte pra Objeto*/
+	
+		if (marcaRepository.findById(marca.getId()).isPresent() == false) {
+			throw new ExceptionLojaVirtual("Marca já foi removida");
+		}
 		
 		marcaRepository.deleteById(marca.getId());
 		
-		return new ResponseEntity<String>("Marca Removida",HttpStatus.OK);
+		return new ResponseEntity<String>(new Gson().toJson("Marca Removida"),HttpStatus.OK);
 	}
 	
-	@ResponseBody
-	@DeleteMapping(value = "**/deleteMarcaPorId/{id}")
+	@ResponseBody /* Deletar Marca por ID */
+	@DeleteMapping(value = "**/deleteMarcaPorId/{id}") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<String> deleteMarcaPorId(@PathVariable("id") Long id) { 
 		
 		marcaRepository.deleteById(id);
@@ -62,8 +102,8 @@ public class MarcaController {
 		return new ResponseEntity<String>("Marca Removida",HttpStatus.OK);
 	}
 	
-    @ResponseBody
-	@GetMapping(value = "**/obterMarcaPorId/{id}")
+    @ResponseBody /* Pesquisar Marca por ID */
+	@GetMapping(value = "**/obterMarcaPorId/{id}") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<Marca> obterMarcaPorId(@PathVariable("id") Long id) throws ExceptionLojaVirtual { 
 		
 		Marca marca = marcaRepository.findById(id).orElse(null);
@@ -75,8 +115,8 @@ public class MarcaController {
 		return new ResponseEntity<Marca>(marca,HttpStatus.OK);
 	}
 	
-	@ResponseBody
-	@GetMapping(value = "**/buscarMarcaPorDescricao/{descricao}")
+	@ResponseBody /* Deletar Marca por Descrição */
+	@GetMapping(value = "**/buscarMarcaPorDescricao/{descricao}") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<List<Marca>> buscarMarcaPorDescricao(@PathVariable("descricao") String descricao) { 
 		
 		List<Marca> marca = marcaRepository.buscarMarcaDescricao(descricao.toUpperCase().trim());
