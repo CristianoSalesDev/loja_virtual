@@ -38,4 +38,14 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Query(nativeQuery = true, value = "update t_usuario set senha = ?1 where login = ?2")	
 	void updateSenhaUser(String senha, String login);
+
+    @Transactional
+    @Modifying(flushAutomatically = true)
+    @Query(nativeQuery = true, value = "delete from t_usuario where empresa_id = ?1")
+	void deleteByPj(Long idEmpresa);
+
+    @Transactional
+    @Modifying(flushAutomatically = true)
+    @Query(nativeQuery = true, value = "delete from t_usuario_acesso where usuario_id in (select distinct usuario_id from t_usuario_acesso where usuario_id in (select id from t_usuario where empresa_id = ?1))")
+	void deleteAcessoUserPj(Long idPj);
 }

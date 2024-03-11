@@ -7,6 +7,9 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.lojavirtual.ExceptionLojaVirtual;
 import com.br.lojavirtual.enums.TipoPessoa;
+import com.br.lojavirtual.model.Acesso;
 import com.br.lojavirtual.model.Endereco;
 import com.br.lojavirtual.model.PessoaFisica;
 import com.br.lojavirtual.model.PessoaJuridica;
@@ -35,6 +39,7 @@ import com.br.lojavirtual.service.ServiceContagemAcessoApi;
 import com.br.lojavirtual.service.ServiceSendEmail;
 import com.br.lojavirtual.util.ValidaCPF;
 import com.br.lojavirtual.util.ValidaCnpj;
+import com.google.gson.Gson;
 
 @RestController
 public class PessoaController {
@@ -60,6 +65,63 @@ public class PessoaController {
 	@Autowired
 	private ServiceSendEmail serviceSendEmail;
 	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/listaPorPagePj/{idEmpresa}/{pagina}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<PessoaJuridica>> pagePj(@PathVariable("idEmpresa") Long idEmpresa,
+			                                             @PathVariable("pagina") Integer pagina) {
+		
+		Pageable pageable = PageRequest.of(pagina, 5, Sort.by("nomeFantasia")); 
+		
+		List<PessoaJuridica> lista = pessoaRepository.findPorPage(idEmpresa, pageable);
+		
+		return new ResponseEntity<List<PessoaJuridica>>(lista, HttpStatus.OK);
+	}	
+	
+	@ResponseBody /*Poder dar um retorno da API*/
+	@GetMapping(value = "**/qtdPaginaPj/{idEmpresa}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<Integer> qtdPaginaPj(@PathVariable("idEmpresa") Long idEmpresa) {
+		
+		Integer qtdPagina = pessoaRepository.qtdPagina(idEmpresa);
+		
+		return new ResponseEntity<Integer>(qtdPagina, HttpStatus.OK);
+	}
+	
+	@ResponseBody /* Pesquisa por Descrição e empresa do Acesso */
+	@GetMapping(value = "**/buscarPorDescricaoPj/{nomeFantasia}/{empresaId}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<List<PessoaJuridica>> buscarPorDescricaoPj(@PathVariable("nomeFantasia") String nomeFantasia,
+			                                                           @PathVariable("empresaId") Long empresaId) { 
+		
+		List<PessoaJuridica> lista = pessoaRepository.buscarPessoaJuridicaDes(nomeFantasia.toUpperCase(), empresaId);
+		
+		return new ResponseEntity<List<PessoaJuridica>>(lista,HttpStatus.OK);
+	}	
+	
+	@ResponseBody /* Pesquisa por Descrição e empresa do Acesso */
+	@GetMapping(value = "**/buscarPorIdPj/{id}") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<PessoaJuridica> buscarPorIdPj(@PathVariable("id") Long id) { 
+		
+		PessoaJuridica pessoaJuridica = pessoaRepository.findById(id).get();
+		
+		return new ResponseEntity<PessoaJuridica>(pessoaJuridica,HttpStatus.OK);
+	}
+	
+	@ResponseBody /* Poder dar um retorno da API */
+	@PostMapping(value = "/deletePj") /* Mapeando a URL para receber o JSON */
+	public ResponseEntity<String> deletePj(@RequestBody PessoaJuridica pj) throws ExceptionLojaVirtual { /* Recebe o JSON e convert pra objeto */
+		
+		if (pessoaRepository.findById(pj.getId()).isPresent() == false) {
+			throw new ExceptionLojaVirtual("Pessoa Jurídica já foi removida");
+		}		
+	
+		usuarioRepository.deleteAcessoUserPj(pj.getId());
+		usuarioRepository.deleteByPj(pj.getId());
+		pessoaRepository.deleteById(pj.getId());
+		
+		return new ResponseEntity<String>(new Gson().toJson("Pessoa Jurídica Removida com sucesso!"),HttpStatus.OK);
+		
+	}
+	
+		
 	@ResponseBody
 	@GetMapping(value = "**/consultaPfNome/{nome}")
 	public ResponseEntity<List<PessoaFisica>> consultaPfNome(@PathVariable("nome") String nome) {
