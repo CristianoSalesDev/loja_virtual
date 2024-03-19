@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -37,7 +38,8 @@ public class CupomDesconto implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataCadastro = new Date();
 	
-	@NotEmpty(message = "Informe a data de Validade do Cupom")
+	//@NotEmpty(message = "Informe a data de Validade do Cupom")
+	//@NotNull(message = "Informe a data de Validade do Cupom")
 	@Column(nullable = false)
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Temporal(TemporalType.DATE)

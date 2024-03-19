@@ -38,8 +38,12 @@ public class Produto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_produto")	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_produto")
 	private Long id;
+
+	@NotNull(message = "Código deve ser informado")
+	@Column(nullable = false)
+	private Long codigoPrincipal; 
 	
 	@DateTimeFormat(pattern = "MM-dd-yyyy")
 	@Temporal(TemporalType.DATE)
@@ -272,7 +276,15 @@ public class Produto implements Serializable {
 
 	public void setMarcaId(Marca marcaId) {
 		this.marcaId = marcaId;
-	}	
+	}
+
+	public Long getCodigoPrincipal() {
+		return codigoPrincipal;
+	}
+
+	public void setCodigoPrincipal(Long codigoPrincipal) {
+		this.codigoPrincipal = codigoPrincipal;
+	}
 
 	@Override
 	public int hashCode() {
